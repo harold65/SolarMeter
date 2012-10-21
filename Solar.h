@@ -4,7 +4,6 @@
 #define Solar_h
 
 #include "Arduino.h"
-#include <Time.h>    // used for 'time_t' type
 
 class Solar
 {
@@ -14,7 +13,6 @@ class Solar
     void CheckSensor();        // check the input and update counters
     void CalculateActual();    // calculate actual and peak power
     void NewDay();             // Reset day-counters
-    void Dummy();
     void ResetPeak();          // reset peak so new peak measurement can start
     
     long Total;                // Total counter. This is on the display of the meter
@@ -24,7 +22,6 @@ class Solar
     int  SID;                  // System id
 
   private:
-    time_t _LastUpdate;        // the time of the last pulse (s)
     long _LastMillis;          // the time of the last pulse (ms)
     long _PulseLength;         // the time between the last two pulses (ms)
     long _MinPulse;            // the minimum time between two pulses since the last ResetPeak

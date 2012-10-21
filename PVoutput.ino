@@ -6,24 +6,6 @@ void SendToPvOutput(Solar S)
     }
 }
 
-void SendTotalToPvOutput(Solar S1,Solar S2,Solar S3)
-{
-    if(SIDTOTAL > 0)
-    {
-        long Today = 0;
-        if(S1.SID > 0) Today += S1.Today;
-        if(S2.SID > 0) Today += S2.Today;
-        if(S3.SID > 0) Today += S3.Today;
-    
-        long Peak = 0;
-        if(S1.SID > 0) Peak += S1.Peak;
-        if(S2.SID > 0) Peak += S2.Peak;
-        if(S3.SID > 0) Peak += S3.Peak;
-        
-        pvoutput(SIDTOTAL, Today, Peak);
-    }
-}
-
 void pvoutput(int sid, long today, long peak)
 {
     EthernetClient pvout;

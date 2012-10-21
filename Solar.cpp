@@ -22,9 +22,7 @@ void Solar::begin()
     Today = 0;
     Peak = 0;
     _PulseLength = 0;
-    _LastUpdate = now();
     _LastMillis = 0;
-    _MinPulse = 0;
 }
 
 void Solar::CheckSensor()
@@ -39,31 +37,14 @@ void Solar::CheckSensor()
     // falling edge?
     if(!solarInput && _SensorIsOn==true)
     {
-        // remember the time of this pulse
-        _LastUpdate = now();   
         // use high resolution for accurate calculation
         _PulseLength = millis() - _LastMillis;
         _LastMillis = millis();
-        // update maximum power = shortest pulse
-        if(_MinPulse > _PulseLength || _MinPulse == 0)
-        {
-            _MinPulse = _PulseLength;
-        }
         // update counters
         Total++; // one edge is 1 Wh
         Today++;
         _SensorIsOn=false;
     }
-}
-
-void Solar::Dummy()
-{
-    _LastUpdate=now();
-    Total++;
-    Today++;
-    _PulseLength = millis() - _LastMillis;
-    _MinPulse = _PulseLength;
-    _LastMillis = millis();   
 }
 
 void Solar::NewDay()
@@ -73,14 +54,13 @@ void Solar::NewDay()
 
 void Solar::ResetPeak()
 {
-    _MinPulse=0;  // reset the peak measurement
     Peak=0;
 }
 
 void Solar::CalculateActual()
 {
     // Was the last solar pulse more than 3 minutes ago?
-    if(now() - _LastUpdate > 180) // <20W
+    if(millis()-_LastMillis > 180000) // <20W
     {
         Actual = 0;  // then we have no output
     }
@@ -89,7 +69,7 @@ void Solar::CalculateActual()
         if(_PulseLength == 0) return;  // prevent division by zero
         // convert to W
         Actual = 3600000 / _PulseLength;
-        Peak = 3600000 / _MinPulse;
+        if(Peak < Actual) Peak = Actual;
     }
 }
 

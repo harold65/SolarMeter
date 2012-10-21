@@ -10,11 +10,10 @@
 static int SID1 = 0;
 static int SID2 = 0;
 static int SID3 = 0;
-static int SIDTOTAL = 0;
 
 // Network variables
 static byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; // MAC address
 static byte ip[] = { 192, 168, 1, 99 }; // IP of arduino
-static byte gateway[] = { 192, 168, 1, 1 };
+static byte dnsserver[] = { 8, 8, 8, 8 };
 
 #endif

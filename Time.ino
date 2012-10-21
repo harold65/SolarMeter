@@ -2,45 +2,55 @@ const int NTP_PACKET_SIZE= 48; // NTP time stamp is in the first 48 bytes of the
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets 
 IPAddress timeServer(192, 43, 244, 18); // time2.nist.gov NTP server
 
+bool UpdateTime()
+{
+  unsigned long newTime = getNtpTime();
+  if (newTime>0)
+  {
+    setTime(newTime);
+    return true;
+  }
+  return false;
+}
+
 unsigned long getNtpTime()
 {
-        sendNTPpacket(timeServer);
-        delay(1000);
-        int n = Udp.parsePacket();
-        if(n >0)
-        {  
-            Udp.read(packetBuffer,NTP_PACKET_SIZE);  // read the packet into the buffer
-            // the timestamp starts at byte 40 of the received packet and is four bytes,
-            // or two words, long. First, esxtract the two words:
-            unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
-            unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
-            // combine the four bytes (two words) into a long integer
-            // this is NTP time (seconds since Jan 1 1900):
-            unsigned long secsSince1900 = highWord << 16 | lowWord;
-            unsigned long now = secsSince1900 - 2208988800UL;  // GMT
-            // DST == DaySavingTime == Zomertijd
-            boolean dst = false;
+    while(Udp.parsePacket()) Udp.flush(); // make sure udp buffer is empty
+    sendNTPpacket(timeServer);
+    delay(1000);
+    if(Udp.parsePacket())
+    {
+        Udp.read(packetBuffer,NTP_PACKET_SIZE);  // read the packet into the buffer
+        // the timestamp starts at byte 40 of the received packet and is four bytes,
+        // or two words, long. First, esxtract the two words:
+        unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
+        unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
+        // combine the four bytes (two words) into a long integer
+        // this is NTP time (seconds since Jan 1 1900):
+        unsigned long secsSince1900 = highWord << 16 | lowWord;
+        unsigned long now = secsSince1900 - 2208988800UL;  // GMT
+        // DST == DaySavingTime == Zomertijd
+        boolean dst = false;
 
-            int m = month(now);
-            dst = !(m < 3 || m > 10); // between october and march
-            if (dst) 
+        int m = month(now);
+        dst = !(m < 3 || m > 10); // between october and march
+        if (dst) 
+        {
+            if (m == 3) 
             {
-                if (m == 3) 
-                {
-                    //  starts last sunday of march
-                    dst = (day(now) >= ((31 - (5 * year(now) /4 + 5) % 7)));
-                } 
-                else if (m== 10) 
-                {
-                    //last sunday of october
-                    dst = (day(now) < ((31 - (5 * year(now) /4 + 2) % 7)));
-                }
+                //  starts last sunday of march
+                dst = (day(now) >= ((31 - (5 * year(now) /4 + 5) % 7)));
+            } 
+            else if (m== 10) 
+            {
+                //last sunday of october
+                dst = (day(now) < ((31 - (5 * year(now) /4 + 2) % 7)));
             }
-            now +=(dst?7200:3600); // CEST or CET
-            Udp.flush();
-            return now;
         }
-    
+        now +=(dst?7200:3600); // CEST or CET
+        Udp.flush();
+        return now;
+    }
     return 0; // return 0 if unable to get the time
 }
 

@@ -1,4 +1,4 @@
-#define VERSION "V5"
+#define VERSION "V7"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -38,12 +38,11 @@ EthernetUDP Udp;
 void setup()
 {
     // initialize network
-    Ethernet.begin(mac, ip);
+    Ethernet.begin(mac, ip, dnsserver);
     // initialize time server
     Udp.begin(8888);
-    setSyncProvider(getNtpTime);
-    setSyncInterval(86400); // resync once a day
-    delay(2000);
+    // wait until time is set
+    while(!UpdateTime());
     // initialize SD card
     SetupSD();
     OpenLogFile();
@@ -86,7 +85,7 @@ void Every5ms()
 void loop()
 {   
     // reset counters at midnight
-    if(day()!=lastDay)
+    if(day()!=lastDay && lastHour==23)
     {
         lastDay=day();
         // save the total counters
@@ -108,6 +107,11 @@ void loop()
         writelong(EE_S1_TODAY,S1.Today);
         writelong(EE_S2_TODAY,S2.Today);
         writelong(EE_S3_TODAY,S3.Today);
+	// sync the time at fixed interval
+	if(lastHour==10 || lastHour==22)
+        {
+          UpdateTime();
+        }
     }
 
     // update every minute
@@ -130,7 +134,6 @@ void loop()
             SendToPvOutput(S1);
             SendToPvOutput(S2);
             SendToPvOutput(S3);
-            SendTotalToPvOutput(S1,S2,S3);
             // reset the maximum for pvoutput
             S1.ResetPeak();
             S2.ResetPeak();
