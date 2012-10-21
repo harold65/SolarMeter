@@ -7,20 +7,21 @@
 #include "Solar.h"
 
 
-Solar::Solar(int pin, int sid)
+Solar::Solar(int pin, int sid, int p)
 {
     pinMode(pin, INPUT);      // initialize the selected io pin
     digitalWrite(pin,HIGH);
     _Pin = pin;
     SID = sid;
+    ppkwh=p;
 }
 
 void Solar::begin()
 {
-    Total = 0;                // initialize all variables to default
     Actual = 0;
-    Today = 0;
     Peak = 0;
+    Today = 0;
+    TodayCnt=0;
     _PulseLength = 0;
     _LastMillis = 0;
 }
@@ -37,12 +38,12 @@ void Solar::CheckSensor()
     // falling edge?
     if(!solarInput && _SensorIsOn==true)
     {
-        // use high resolution for accurate calculation
+        // store the time between the last two pulses
         _PulseLength = millis() - _LastMillis;
+        //store the time for the next pulse
         _LastMillis = millis();
         // update counters
-        Total++; // one edge is 1 Wh
-        Today++;
+        TodayCnt++;
         _SensorIsOn=false;
     }
 }
@@ -50,6 +51,7 @@ void Solar::CheckSensor()
 void Solar::NewDay()
 {
     Today=0;  // reset todays totals
+    TodayCnt=0;
 }
 
 void Solar::ResetPeak()
@@ -57,10 +59,10 @@ void Solar::ResetPeak()
     Peak=0;
 }
 
-void Solar::CalculateActual()
+void Solar::CalculateActuals()
 {
     // Was the last solar pulse more than 3 minutes ago?
-    if(millis()-_LastMillis > 180000) // <20W
+    if(millis()-_LastMillis > 180000)
     {
         Actual = 0;  // then we have no output
     }
@@ -68,8 +70,9 @@ void Solar::CalculateActual()
     {
         if(_PulseLength == 0) return;  // prevent division by zero
         // convert to W
-        Actual = 3600000 / _PulseLength;
+        Actual = (3600000000 / ppkwh) / _PulseLength;
         if(Peak < Actual) Peak = Actual;
     }
+    Today = TodayCnt * 1000 / ppkwh;
 }
 

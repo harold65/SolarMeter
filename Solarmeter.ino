@@ -1,4 +1,4 @@
-#define VERSION "V7"
+#define VERSION "V8"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -13,17 +13,14 @@
 #include "Solar.h"
 
 // define eeprom addresses
-#define EE_S1_TOTAL 0
 #define EE_S1_TODAY 1
-#define EE_S2_TOTAL 2
 #define EE_S2_TODAY 3
-#define EE_S3_TOTAL 4
 #define EE_S3_TODAY 5
 
 // Construct a class for each sensor
-Solar S1(2,SID1);
-Solar S2(3,SID2);
-Solar S3(4,SID3);
+Solar S1(2,SID1,1000);  // S0 sensor at pin 2 with 1000 pulses per kWh
+Solar S2(3,SID2,1000);  // S0 sensor at pin 3 with 1000 pulses per kWh
+Solar S3(4,SID3,2000);  // S0 sensor at pin 4 with 2000 pulses per kWh
 
 // global variables
 int    lastDay;
@@ -56,19 +53,11 @@ void setup()
     lastMinute = minute();
     lastHour = hour();
     // restore the last saved values
-    S1.Total = readlong(EE_S1_TOTAL);
+
     S1.Today = readlong(EE_S1_TODAY);
-    // Total was saved at midnight so we have to add todays production
-    S1.Total += S1.Today;
-    
-    S2.Total = readlong(EE_S2_TOTAL);
     S2.Today = readlong(EE_S2_TODAY);
-    S2.Total += S2.Today;
-    
-    S3.Total = readlong(EE_S3_TOTAL);
     S3.Today = readlong(EE_S3_TODAY);
-    S3.Total += S3.Today;
-    
+   
     // start the timer interrupt
     MsTimer2::set(5, Every5ms); // 5ms period
     MsTimer2::start();
@@ -88,10 +77,6 @@ void loop()
     if(day()!=lastDay && lastHour==23)
     {
         lastDay=day();
-        // save the total counters
-        writelong(EE_S1_TOTAL,S1.Total);
-        writelong(EE_S2_TOTAL,S2.Total);
-        writelong(EE_S3_TOTAL,S3.Total);
         S1.NewDay();
         S2.NewDay();
         S3.NewDay();
@@ -119,14 +104,14 @@ void loop()
     {
         //S1.Dummy(); for testing outputs without connected sensor
         lastMinute=minute();
-        S1.CalculateActual();
-        S2.CalculateActual();
-        S3.CalculateActual();
+        S1.CalculateActuals();
+        S2.CalculateActuals();
+        S3.CalculateActuals();
         
         WriteDateToLog();
-        logFile << S1.Total << ";" << S1.Actual << ";" << endl;
-        logFile << S2.Total << ";" << S2.Actual << ";" << endl;
-        logFile << S3.Total << ";" << S3.Actual << ";" << endl;
+        logFile << S1.Today << ";" << S1.Actual << ";" << endl;
+        logFile << S2.Today << ";" << S2.Actual << ";" << endl;
+        logFile << S3.Today << ";" << S3.Actual << ";" << endl;
         
         if((lastMinute%5)==0)
         {

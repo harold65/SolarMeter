@@ -89,9 +89,8 @@ void solarStatus(EthernetClient client, Solar S)
     if(S.SID>0)
     {
         client << S.SID << endl;
-        client << F("Actual: ") << S.Actual << endl;
         client << F("Today: ") << S.Today << endl;
-        client << F("Total: ") << S.Total << endl; 
+        client << F("Actual: ") << S.Actual << endl;
         client << F("Peak: ") << S.Peak << endl << endl;
     }
 }
