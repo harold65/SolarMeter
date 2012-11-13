@@ -19,14 +19,15 @@ class Solar
     long Actual;               // Actual generated power
     long Peak;                 // Peak power of the last period
     int  SID;                  // System id
+    bool Consumption;          // if true, the sensor is logging consumption
 
   private:
-    long TodayCnt;             // today's pulse count
-    int  ppkwh;                // the pulses per kWh for this counter
+    long _TodayCnt;            // today's pulse count
+    int  _ppkwh;               // the pulses per kWh for this counter
     long _LastMillis;          // the time of the last pulse (ms)
     long _PulseLength;         // the time between the last two pulses (ms)
-    long _MinPulse;            // the minimum time between two pulses since the last ResetPeak
     bool _SensorIsOn;          // keeps track of the last input status
+    bool _consumption;         // if true, the sensor is logging consumption
     int  _Pin;
 };
 

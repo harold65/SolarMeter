@@ -68,10 +68,15 @@ void showStatus(EthernetClient client)
     int i;
     client << DateTime(now()) << endl;
     client << F(VERSION) << endl;
-
+#ifdef SID1
     solarStatus(client, S1);
+#endif
+#ifdef SID2
     solarStatus(client, S2);
+#endif
+#ifdef SID3    
     solarStatus(client, S3);
+#endif
     
     client << F("Eeprom:") << endl;
     for(i=0;i<10;i++)

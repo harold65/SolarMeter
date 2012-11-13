@@ -1,7 +1,6 @@
 //
 // Solar.cpp
 // Count and store pulses from digital input
-// Assuming 1000 pulses per kWh
 
 #include "Arduino.h"
 #include "Solar.h"
@@ -13,7 +12,16 @@ Solar::Solar(int pin, int sid, int p)
     digitalWrite(pin,HIGH);
     _Pin = pin;
     SID = sid;
-    ppkwh=p;
+    if(p<0)
+    {
+      _ppkwh=-p;
+      Consumption=true;
+    }
+    else
+    {
+      _ppkwh=p;
+      Consumption=false;
+    }
 }
 
 void Solar::begin()
@@ -21,7 +29,7 @@ void Solar::begin()
     Actual = 0;
     Peak = 0;
     Today = 0;
-    TodayCnt=0;
+    _TodayCnt=0;
     _PulseLength = 0;
     _LastMillis = 0;
 }
@@ -43,7 +51,7 @@ void Solar::CheckSensor()
         //store the time for the next pulse
         _LastMillis = millis();
         // update counters
-        TodayCnt++;
+        _TodayCnt++;
         _SensorIsOn=false;
     }
 }
@@ -51,7 +59,7 @@ void Solar::CheckSensor()
 void Solar::NewDay()
 {
     Today=0;  // reset todays totals
-    TodayCnt=0;
+    _TodayCnt=0;
 }
 
 void Solar::ResetPeak()
@@ -70,9 +78,9 @@ void Solar::CalculateActuals()
     {
         if(_PulseLength == 0) return;  // prevent division by zero
         // convert to W
-        Actual = (3600000000 / ppkwh) / _PulseLength;
+        Actual = (3600000000 / _ppkwh) / _PulseLength;
         if(Peak < Actual) Peak = Actual;
     }
-    Today = TodayCnt * 1000 / ppkwh;
+    Today = _TodayCnt * 1000 / _ppkwh;
 }
 
