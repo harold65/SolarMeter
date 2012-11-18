@@ -14,7 +14,7 @@ void SendToPvOutput(Solar S)
         if(S.Consumption)  // consumption counter
         {
           pvout << F("&v3=") << S.Today;
-          pvout << F("&v4=") << S.Peak;
+          pvout << F("&v4=") << S.Peak << endl;
         }
         else  // production counter
         {

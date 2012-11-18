@@ -1,4 +1,4 @@
-#define VERSION "V8"
+#define VERSION "V8.1"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -11,7 +11,7 @@
 #include "Userdefs.h"
 #include "Solar.h"
 #ifdef USE_LOGGING
-// #include <SD.h>
+ #include <SD.h>
 #endif
 
 // define eeprom addresses
@@ -38,7 +38,7 @@ Solar S1(SID1_PIN,SID1,SID1_PLS);
 Solar S2(SID2_PIN,SID2,SID2_PLS);
 #endif
 #ifdef SID3
-Solar S2(SID3_PIN,SID3,SID3_PLS);
+Solar S3(SID3_PIN,SID3,SID3_PLS);
 #endif
 
 void setup()
@@ -140,6 +140,12 @@ void loop()
     {
       UpdateTime();
     }
+    #ifdef USE_MAIL
+      if(lastHour==MAIL_TIME)
+      {
+        SendMail();
+      }
+    #endif
   }
 
   // update every minute
