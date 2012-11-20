@@ -6,8 +6,9 @@
 // If you want the logging data to be written to the SD card, remove // from the next line:
 #define USE_LOGGING
 
+
 // You can find your api-key in the settings page, under api-settings
-#define PVOUTPUT_API_KEY "----fill-in-your-own-api-key----"
+#define PVOUTPUT_API_KEY "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 // The configuration of the first S0 sensor is done here
 #define SID1 1234 // The system number can be found on the settings page, under systems
@@ -20,7 +21,7 @@
 #define SID2_PLS -1000 // a negative number will log the sensor as "consumption"
 
 // The configuration of the third S0 sensor is done here (not used in this case)
-//#define SID3 1234
+//#define SID3 1235
 //#define SID3_PIN 4
 //#define SID3_PLS 1000
 

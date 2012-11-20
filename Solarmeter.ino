@@ -1,4 +1,4 @@
-#define VERSION "V8.1"
+#define VERSION "V8.2"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -10,6 +10,7 @@
 
 #include "Userdefs.h"
 #include "Solar.h"
+
 #ifdef USE_LOGGING
  #include <SD.h>
 #endif
@@ -23,7 +24,7 @@
 int    lastDay;
 int    lastHour;
 int    lastMinute;
-bool   pvoutputok = false;
+int    pvResponse;
 EthernetServer server(80);              // the web server is used to serve status calls
 char   webData[70];
 #ifdef USE_LOGGING

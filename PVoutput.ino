@@ -3,7 +3,6 @@ void SendToPvOutput(Solar S)
     EthernetClient pvout;
     if (pvout.connect("pvoutput.org",80))
     {
-        pvoutputok = true;
         pvout << F("GET /service/r2/addstatus.jsp");
         pvout << F("?key=" PVOUTPUT_API_KEY);
         pvout << F("&sid=") << S.SID;
@@ -22,18 +21,16 @@ void SendToPvOutput(Solar S)
           pvout << F("&v2=") << S.Peak << endl;
         }
         pvout << F("Host: pvoutput.org") << endl << endl;
-        long x = millis() + 2000;
-        // wait until one second passed or a character was received.
-        while (!pvout.available() && millis() < x);  
-        // dump the response to the log
-        while(pvout.available());
+        // read the response code. 200 means ok
+        pvResponse = pvout.parseInt();
+        pvout.flush();
         pvout.stop();
         // give pvoutput some time to process the request
         delay(200);
     }
     else
     {
-        pvoutputok=false;
+        pvResponse=0;
     }
 }
 
