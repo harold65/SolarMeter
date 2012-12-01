@@ -1,6 +1,5 @@
 const int NTP_PACKET_SIZE= 48; // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets 
-IPAddress timeServer(192, 43, 244, 18); // time2.nist.gov NTP server
 
 bool UpdateTime()
 {
@@ -16,7 +15,7 @@ bool UpdateTime()
 unsigned long getNtpTime()
 {
     while(Udp.parsePacket()) Udp.flush(); // make sure udp buffer is empty
-    sendNTPpacket(timeServer);
+    sendNTPpacket();
     delay(1000);
     if(Udp.parsePacket())
     {
@@ -55,7 +54,7 @@ unsigned long getNtpTime()
 }
 
 // send an NTP request to the time server at the given address 
-void sendNTPpacket(IPAddress& address)
+void sendNTPpacket()
 {
   // set all bytes in the buffer to 0
   memset(packetBuffer, 0, NTP_PACKET_SIZE); 
@@ -73,7 +72,7 @@ void sendNTPpacket(IPAddress& address)
 
   // all NTP fields have been given values, now
   // you can send a packet requesting a timestamp: 		   
-  Udp.beginPacket(address, 123); //NTP requests are to port 123
+  Udp.beginPacket("pool.ntp.org", 123); //NTP requests are to port 123
   Udp.write(packetBuffer,NTP_PACKET_SIZE);
   Udp.endPacket(); 
 }
