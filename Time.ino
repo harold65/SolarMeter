@@ -1,5 +1,6 @@
 const int NTP_PACKET_SIZE= 48; // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets 
+time_t  lastTimeUpdate = 0;
 
 bool UpdateTime()
 {
@@ -7,6 +8,7 @@ bool UpdateTime()
   if (newTime>0)
   {
     setTime(newTime);
+    lastTimeUpdate = newTime; 
     return true;
   }
   return false;

@@ -64,7 +64,7 @@ void showStatus(EthernetClient client)
     {
       client << i << " : " << readlong(i) << endl;
     }
-    
+    client << F("Time updated:") << DateTime(lastTimeUpdate) << endl;
     client << F("PvOutput response: ") << pvResponse;
 }
 
