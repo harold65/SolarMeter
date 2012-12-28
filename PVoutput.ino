@@ -1,7 +1,27 @@
+IPAddress ip_pvoutput;
+int DnsStatus;
+
+// This function will contact the DNS server and ask for an IP address of PvOutput
+// If successfull, this address will be used
+// If not, keep using the previous found address
+// In this way, we can still update to pvoutput if the dns timeouts.
+void CheckIpPv()
+{
+  // Look up the host first
+  DNSClient dns;
+  IPAddress remote_addr;
+
+  dns.begin(Ethernet.dnsServerIP());
+  DnsStatus = dns.getHostByName("pvoutput.org", remote_addr);
+  if (DnsStatus == 1)  ip_pvoutput = remote_addr; // if success, copy
+}
+
 void SendToPvOutput(Solar S)
 {
     EthernetClient pvout;
-    if (pvout.connect("pvoutput.org",80))
+    CheckIpPv(); // update the ipaddress via DNS
+    int res = pvout.connect(ip_pvoutput,80);
+    if(res==1) // connection successfull
     {
         pvout << F("GET /service/r2/addstatus.jsp");
         pvout << F("?key=" PVOUTPUT_API_KEY);
@@ -30,7 +50,7 @@ void SendToPvOutput(Solar S)
     }
     else
     {
-        pvResponse=0;
+        pvResponse=res;
     }
 }
 

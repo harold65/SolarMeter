@@ -1,8 +1,9 @@
-#define VERSION "V8.4"
+#define VERSION "V8.5"
 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
+#include <Dns.h>
 #include <Time.h>
 #include <FlashMini.h>
 #include <MsTimer2.h>
