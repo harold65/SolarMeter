@@ -20,15 +20,10 @@ void SendMail()
                         if(checkResponse())
                         {
                             mailClient << F("Subject:SolarMeter ") << day() << endl << endl; // insert subject
-                            #ifdef SID1
-                              solarStatus(mailClient,S1);
-                            #endif
-                            #ifdef SID2
-                              solarStatus(mailClient,S2);
-                            #endif
-                            #ifdef SID3
-                              solarStatus(mailClient,S3);
-                            #endif
+                            for(byte i=0;i<NUMSENSORS;i++)
+                            {
+                              sensors[i]->Status(mailClient);
+                            }
                             mailClient << F(".") << endl; // end of mail
                             mailClient << F("QUIT") << endl; // terminate connection
                             checkResponse();

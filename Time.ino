@@ -14,6 +14,15 @@ bool UpdateTime()
   return false;
 }
 
+char dt[20];
+char* DateTime(time_t t)
+{
+    int y = year(t)-2000;
+    if(y < 0) sprintf(dt,"Invalid");
+    else      sprintf(dt, "%02d.%02d.%02d %02d:%02d:%02d", day(t),month(t),y,hour(t),minute(t),second(t));
+    return dt;
+}
+
 unsigned long getNtpTime()
 {
     while(Udp.parsePacket()) Udp.flush(); // make sure udp buffer is empty
@@ -74,7 +83,7 @@ void sendNTPpacket()
 
   // all NTP fields have been given values, now
   // you can send a packet requesting a timestamp: 		   
-  Udp.beginPacket("pool.ntp.org", 123); //NTP requests are to port 123
+  Udp.beginPacket("time.nist.gov", 123); //NTP requests are to port 123
   Udp.write(packetBuffer,NTP_PACKET_SIZE);
   Udp.endPacket(); 
 }
