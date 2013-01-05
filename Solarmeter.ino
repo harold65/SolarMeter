@@ -1,4 +1,4 @@
-#define VERSION "V9"
+#define VERSION "V9.1"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -11,7 +11,7 @@
 #include "AnalogSensor.h"
 #include "FerrarisSensor.h"
 #include "Temperature.h"
-#include "Userdefs.h"
+#include "userdefs.h"
 
 //#include <SD.h>
 
@@ -48,7 +48,6 @@ void setup()
     {
         sensors[i]->Begin(i);
     }
-
     lastDay = day();
     lastMinute = minute();
     lastHour = hour();
@@ -126,8 +125,8 @@ void loop()
             logFile.flush(); 
         #endif
         
-        // update every 5 minutes
-        if((lastMinute%5)==0)
+        // update every 5 minutes or whatever is set in userdefs
+        if((lastMinute%UPDATEINTERVAL)==0)
         {
             SendToPvOutput(sensors);
             // reset the maximum for pvoutput
@@ -139,7 +138,6 @@ void loop()
     }
     // see if there are clients to serve
     ServeWebClients();
-
     delay(50);
 }
 

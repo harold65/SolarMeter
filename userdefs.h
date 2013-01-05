@@ -1,17 +1,15 @@
-//*****************************************************************
-//  userdefines  
-
 #ifndef userdefs
 #define userdefs
 
 //*****************************************************************
 // If you want the logging data to be written to the SD card, remove // from the next line:
+// also remove the // from the solarmeter.ino line "//#include <SD.h>"
 //#define USE_LOGGING
 
 // Mail variables. Uncomment the next line and a mail will be sent once a day
 #define USE_MAIL
 #define MAIL_TIME 21 // The default time to mail is 21:00 h
-#define MAIL_TO "harold65@gmail.com" // fill in the destination mail address
+#define MAIL_TO "mymail@gmail.com" // fill in the destination mail address
 #define MAIL_FROM "arduino@meterkast.nl" // any valid mail address will do here
 #define MAIL_SERVER "smtp.upcmail.nl" // use the server address of your own provider
 
@@ -28,6 +26,12 @@ static byte dnsserver[] = {192,168,1,1};    // use the address of your gateway {
 #define PVOUTPUT_API_KEY "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 //*****************************************************************
+// The update interval must match what you have set in the PvOutput settings
+// PvOutput->Settings->System->Live settings->Status interval
+// Default is 5 minutes
+#define UPDATEINTERVAL 5
+
+//*****************************************************************
 // Sensor configuration
 //*****************************************************************
 // NUMSENSORS must match the number of sensors defined.
@@ -38,24 +42,28 @@ static byte dnsserver[] = {192,168,1,1};    // use the address of your gateway {
 //   2: The number of pulses for 1 kWh
 //   3: The System ID of the corresponding pvOutput graph
 //   4: The number of the variable to log to (see end of file for allowed numbers)
-S0Sensor  S1(2,1000,2222,2);   // S0 sensor connected to pin 2, logging to variable 2 (production) of sid 2222
-//S0Sensor  S2(3,2000,2222,2);   // S0 sensor connected to pin 3, logging to variable 2 (production) of sid 2222. This will be added to S1
-//S0Sensor  S3(4,1000,3333,4);   // S0 sensor connected to pin 4, logging to variable 4 (consumption) of sid 3333
+S0Sensor  S1(2,1000,2222,2);   // S0 sensor connected to pin 2, logging to variable 1 & 2 (production) of sid 2222
+//S0Sensor  S2(3,2000,2222,2);   // S0 sensor connected to pin 3, logging to variable 1 & 2 (production) of sid 2222. This will be added to S1
+//S0Sensor  S3(4,1000,3333,4);   // S0 sensor connected to pin 4, logging to variable 3 & 4 (consumption) of sid 3333
 
 // Analog Sensors have 4 parameters: 
 //   1: The analog pin to which they are connected
 //   2: The number of pulses for unit
 //   3: The SID
 //   4: The number of the variable to log to (see end of file for allowed numbers)
-AnalogSensor G1(A2,100,2222,6);    // gas sensor connected to analog 2, measuring 100 pulses per m3, showing on SID 2812 variable 6 (voltage)
+AnalogSensor G1(A2,100,2222,6);    // gas sensor connected to analog 2, measuring 100 pulses per m3, showing on SID 2222 variable 6 (voltage)
 
-// Graaddagen 'sensor' will calculate the gas/graaddag factor. 
+// Example:
+// AnalogSensor W1(A1,1000,2222,8);  // water meter sensor connected to analog 1, measuring 1000 pulses per m3.
+//                                     Daily water usage (liter) is on v7, actual (liter/h) on v8 (donation mode)
+
+// Temperature 'sensor': 
 // Parameters:
 //   1: The number of the weatherstation to get the temperature from
 //      Find the nearest weatherstation on:  http://gratisweerdata.buienradar.nl/#Station
 //   2: The SID
+//   Temperature is logged to v5
 Temperature T1("6275",2222);
-//*****************************************************************
 // if you want to log the gas per 'graaddag' in stead of the temperature, enable the next line
 //#define GRAADDAGEN
 //*****************************************************************

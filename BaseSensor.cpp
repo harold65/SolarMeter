@@ -53,8 +53,9 @@ void BaseSensor::CalculateActuals()
           return;  // prevent division by zero
        }
         // convert to W
-        Actual = (3600000000 / ppu) / pulseLength;
-        if(Peak < Actual) Peak = Actual;
+        Actual = 3600000000 / ppu;
+        Actual /= pulseLength;
+        if(Peak < abs(Actual)) Peak = Actual;
     }
     Today = todayCnt * 1000 / ppu;
 }
