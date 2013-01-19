@@ -47,7 +47,7 @@ void SendToPvOutput(BaseSensor** S)
       v[type-1] += S[i]->Today;
       b[type-1] = true;
     }
-    else if(type==24)  //ferraris
+    else if(type==24)  //ferraris or P1
     {
       // total consumption is production + net consumption
       v[2] = v[0] + S[i]->Today;
@@ -65,42 +65,45 @@ void SendToPvOutput(BaseSensor** S)
 
     if(i==NUMSENSORS-1 || S[i+1]->SID!=sid)
     {
-      CheckIpPv(); // update the ipaddress via DNS
-      int res = pvout.connect(ip_pvoutput,80);
-      if(res==1) // connection successfull
+      if(sid > 0) // only upload if the sid is valid
       {
-        pvout << F("GET /service/r2/addstatus.jsp");
-        pvout << F("?key=" PVOUTPUT_API_KEY);
-        pvout << F("&sid=") << sid;
-        sprintf(webData, "&d=%04d%02d%02d", year(),month(),day());
-        pvout << webData;
-        sprintf(webData, "&t=%02d:%02d", hour(),minute());
-        pvout << webData;
-        for(byte i=0;i<12;i++)
+        CheckIpPv(); // update the ipaddress via DNS
+        int res = pvout.connect(ip_pvoutput,80);
+        if(res==1) // connection successfull
         {
+          pvout << F("GET /service/r2/addstatus.jsp");
+          pvout << F("?key=" PVOUTPUT_API_KEY);
+          pvout << F("&sid=") << sid;
+          sprintf(webData, "&d=%04d%02d%02d", year(),month(),day());
+          pvout << webData;
+          sprintf(webData, "&t=%02d:%02d", hour(),minute());
+          pvout << webData;
+          for(byte i=0;i<12;i++)
+          {
             #ifdef GRAADDAGEN
-                // replace temperature by factor
-                if(i==4 && b[i])
-                {
-                  pvout << "&v5=" << T1.GetFactor(G1.Today,hour());
-                }
-                else
+              // replace temperature by factor
+              if(i==4 && b[i])
+              {
+                pvout << "&v5=" << T1.GetFactor(G1.Today,hour());
+              }
+              else
             #endif
-            if(b[i])  // only send extended data if present
+            if(b[i])  // only send data if present
             {
               pvout << "&v" << i+1 << "=" << v[i];
             }
+          }
+          pvout << endl << F("Host: pvoutput.org") << endl << endl;
+          // read the response code. 200 means ok
+          pvResponse = pvout.parseInt();
+          pvout.stop();
+          // give pvoutput some time to process the request
+          delay(200);
         }
-        pvout << endl << F("Host: pvoutput.org") << endl << endl;
-        // read the response code. 200 means ok
-        pvResponse = pvout.parseInt();
-        pvout.stop();
-        // give pvoutput some time to process the request
-        delay(200);
-      }
-      else // cannnot connect
-      {
-        pvResponse=res;
+        else // cannnot connect
+        {
+          pvResponse=res;
+        }
       }
       // reset the counters for the next round
       for(byte i=0;i<12;i++)

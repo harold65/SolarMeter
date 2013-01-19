@@ -78,7 +78,7 @@ Temperature T1("6275",2222);
 //   This sensor always logs to variable 3 and 4
 //FerrarisSensor F1(A3,A4,250,2222);
 
-P1Power P1(&Serial,2222);
+P1Power P1(&Serial,2222, 24);
 P1GasSensor P1Gas(&P1, 2222,6);
 
 // the next list must be in the correct order and have the same length as NUMSENSORS

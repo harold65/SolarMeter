@@ -14,7 +14,7 @@
 class P1Power : public BaseSensor
 {
   public:
-    P1Power(HardwareSerial* serIn, int sid); 
+    P1Power(HardwareSerial* serIn, int sid, byte t); 
     void Begin(byte i);
     void CalculateActuals();            // Convert P1 data to actual and day values
     void Status(EthernetClient client); // Dump status to ethernet    
