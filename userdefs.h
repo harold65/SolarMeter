@@ -20,6 +20,8 @@ static byte ip[] = { 192, 168, 1, 99 }; // IP of arduino
 static byte dnsserver[] = {192,168,1,1};    // use the address of your gateway { 192, 168, 1, 1 } if your router supports this
                                             // or use the address of the dns server of your internet provider
                                             // or use { 8, 8, 8, 8 } as general DNS server from Google if you have no other option
+static byte gateway[]   = { 192, 168, 1, 1 };
+static byte subnet[]    = { 255, 255, 255, 0 };  
 
 //*****************************************************************
 // You can find your api-key in the PvOutput settings page, under api-settings
@@ -51,7 +53,7 @@ S0Sensor  S1(2,1000,2222,2);   // S0 sensor connected to pin 2, logging to varia
 //   2: The number of pulses for unit
 //   3: The SID
 //   4: The number of the variable to log to (see end of file for allowed numbers)
-AnalogSensor G1(A2,100,2222,6);    // gas sensor connected to analog 2, measuring 100 pulses per m3, showing on SID 2222 variable 6 (voltage)
+//AnalogSensor G1(A2,100,2222,6);    // gas sensor connected to analog 2, measuring 100 pulses per m3, showing on SID 2222 variable 6 (voltage)
 
 // Example:
 // AnalogSensor W1(A1,1000,2222,8);  // water meter sensor connected to analog 1, measuring 1000 pulses per m3.
@@ -74,9 +76,12 @@ Temperature T1("6275",2222);
 //   3: The number of revolutions of the disc for 1kWh
 //   4: The SID
 //   This sensor always logs to variable 3 and 4
-FerrarisSensor F1(A3,A4,250,2222);
+//FerrarisSensor F1(A3,A4,250,2222);
+
+P1Power P1(&Serial,2222);
+P1GasSensor P1Gas(&P1, 2222,6);
 
 // the next list must be in the correct order and have the same length as NUMSENSORS
-BaseSensor* sensors[] = {&S1,&F1,&G1,&T1};
+BaseSensor* sensors[] = {&S1,&P1,&P1Gas,&T1};
 
 #endif

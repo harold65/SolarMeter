@@ -3,7 +3,6 @@
 BaseSensor::BaseSensor(int p,int sid)
 {
    ppu=p;
-
    SID=sid;
 }
 
@@ -21,14 +20,26 @@ void BaseSensor::Begin(byte i)
 
 void BaseSensor::CheckSensor()
 {
+	// Check sensor must be done by the derived sensor
 }
 
-void BaseSensor::NewHour()
+void BaseSensor::Loop()
+{
+	// Derived sensors can execute non time critical actions here
+}
+
+void BaseSensor::Save()
 {
     eeprom_write_dword((uint32_t*) ee, todayCnt); 
 }
 
-void BaseSensor::NewDay()
+void BaseSensor::Update(long Value)
+{
+    todayCnt = Value;
+    Save();
+}
+
+void BaseSensor::Reset()
 {
     todayCnt=0;
     Today=0;
@@ -71,4 +82,5 @@ void BaseSensor::Status(EthernetClient client)
     client << F(" Pulse=") << pulseLength;
     client << F(" PPU=") << ppu << endl;    
 }
+
 

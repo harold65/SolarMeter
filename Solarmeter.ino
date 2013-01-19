@@ -1,4 +1,4 @@
-#define VERSION "V9.1"
+#define VERSION "V10"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -8,6 +8,8 @@
 #include <FlashMini.h>
 #include <MsTimer2.h>
 #include "S0Sensor.h"
+#include "P1GasSensor.h"
+#include "P1Power.h"
 #include "AnalogSensor.h"
 #include "FerrarisSensor.h"
 #include "Temperature.h"
@@ -31,7 +33,7 @@ char   webData[70];
 void setup()
 {
     // initialize network
-    Ethernet.begin(mac, ip, dnsserver);
+    Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
     // initialize time server
     Udp.begin(8888);
     // wait until time is set
@@ -74,7 +76,7 @@ void loop()
         lastDay=day();
         for(byte i=0;i<NUMSENSORS;i++)
         {
-            sensors[i]->NewDay();
+            sensors[i]->Reset();
         }
         #ifdef USE_LOGGING
             // create new logfile
@@ -90,7 +92,7 @@ void loop()
         // save the daily values every hour
         for(byte i=0;i<NUMSENSORS;i++)
         {
-            sensors[i]->NewHour();
+            sensors[i]->Save();
         }
         // sync the time at fixed interval
         if(lastHour==10 || lastHour==22)
@@ -136,9 +138,13 @@ void loop()
             }
         }
     }
+    // let all sensors do other stuff
+    for(byte i=0;i<NUMSENSORS;i++)
+    {
+      sensors[i]->Loop();
+    }
     // see if there are clients to serve
     ServeWebClients();
-    delay(50);
 }
 
 
