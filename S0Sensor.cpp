@@ -1,10 +1,9 @@
 #include "S0Sensor.h"
 
-S0Sensor::S0Sensor(byte pn, int p, int sid, byte v) : BaseSensor(p,sid)
+S0Sensor::S0Sensor(byte pn, int p, int sid, byte v, int f) : BaseSensor(p,sid,f)
 {
     pin = pn;
-    pinMode(pin, INPUT);
-    digitalWrite(pin,HIGH);
+    pinMode(pin, INPUT_PULLUP);
     Type = v;
 }
 

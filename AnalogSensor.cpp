@@ -4,7 +4,7 @@
 
 #include "AnalogSensor.h"
 
-AnalogSensor::AnalogSensor(int pn, int p, int sid, byte type) : BaseSensor(p,sid)
+AnalogSensor::AnalogSensor(int pn, int p, int sid, byte type, int f) : BaseSensor(p,sid,f)
 {
     pin = pn;
     Type = type;

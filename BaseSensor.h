@@ -11,10 +11,10 @@
 class BaseSensor
 {
   public:
-  BaseSensor(int ppu, int sid);                // constructor
+  BaseSensor(int ppu, int sid, int f);         // constructor
   virtual void Begin(byte index);              // initialize all variables
   virtual void CheckSensor();                  // check the input and update counters (called from 5ms interrupt)
-  virtual void Loop();                         // Called from main loop				
+  virtual void Loop(int m);                    // Called from main loop				
   virtual void CalculateActuals();             // Convert all counters according to the pulses per unit
   virtual void Status(EthernetClient client);  // Dump status to ethernet
   virtual void Reset();                        // Reset day-counter
@@ -26,6 +26,7 @@ class BaseSensor
   long Peak;                                   // Peak value of the last period
   int  SID;                                    // System id where this sensor logs to
   byte Type;                                   // Variable of PvOutput to log to. See userdefs.h for explanation  
+  int Factor;
   
   protected:
   long todayCnt;                               // today's pulse count

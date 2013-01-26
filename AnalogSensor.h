@@ -9,7 +9,7 @@
 class AnalogSensor : public BaseSensor
 {
   public:
-    AnalogSensor(int pin,int p, int sid, byte type);
+    AnalogSensor(int pin,int p, int sid, byte type, int f);
     void Begin(byte i);
     void CheckSensor();
   

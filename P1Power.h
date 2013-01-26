@@ -14,12 +14,12 @@
 class P1Power : public BaseSensor
 {
   public:
-    P1Power(HardwareSerial* serIn, int sid, byte t); 
+    P1Power(HardwareSerial* serIn, int sid, byte t, int f); 
     void Begin(byte i);
     void CalculateActuals();            // Convert P1 data to actual and day values
     void Status(EthernetClient client); // Dump status to ethernet    
     void Reset();                       // Reset day-counters
-    void Loop();                        // scan the P1 port in the main loop
+    void Loop(int m);                   // scan the P1 port in the main loop
     	
     // Smartmeter data:
     long  PowerUsage;	// Huidig afgegenomen vermogen, uit P1 meter (wordt in variabele Today gezet)

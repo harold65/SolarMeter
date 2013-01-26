@@ -1,6 +1,6 @@
 #include "P1GasSensor.h"
 
-P1GasSensor::P1GasSensor(P1Power* P1port, int sid, byte t) : BaseSensor(1000,sid)
+P1GasSensor::P1GasSensor(P1Power* P1port, int sid, byte t, int f) : BaseSensor(1000,sid,f)
 {
   P1 = P1port;
   Type = t;

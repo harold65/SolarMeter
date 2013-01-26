@@ -141,10 +141,12 @@ void loop()
     // let all sensors do other stuff
     for(byte i=0;i<NUMSENSORS;i++)
     {
-      sensors[i]->Loop();
+      sensors[i]->Loop(lastMinute);
     }
     // see if there are clients to serve
     ServeWebClients();
+    // give the thernet shield some time to rest
+    delay(50);
 }
 
 

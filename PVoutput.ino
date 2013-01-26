@@ -23,7 +23,7 @@ void SendToPvOutput(BaseSensor** S)
   EthernetClient pvout;
   // create a total for each variable that can be used in pvoutput
   // !! The index in this array starts at 0 while the pvoutput vars start at 1
-  long v[12]; // data sum
+  float v[12]; // data sum
   bool b[12]; // data present flags
   // start with 0
   for(byte i=0;i<12;i++)
@@ -39,26 +39,26 @@ void SendToPvOutput(BaseSensor** S)
     byte type = S[i]->Type;
     if(type==5)       //temperature
     {
-      v[type-1] += S[i]->Actual;
+      v[type-1] += (float)(S[i]->Actual) / S[i]->Factor;
       b[type-1] = true;
     }
     else if(type==6)  //voltage
     {
-      v[type-1] += S[i]->Today;
+      v[type-1] += (float)(S[i]->Today) / S[i]->Factor;
       b[type-1] = true;
     }
     else if(type==24)  //ferraris or P1
     {
       // total consumption is production + net consumption
-      v[2] = v[0] + S[i]->Today;
-      v[3] = v[1] + S[i]->Actual;
+      v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
+      v[3] = v[1] + (float)(S[i]->Actual) / S[i]->Factor;
       b[2] = true;
       b[3] = true;
     }
     else  // S0 sensors
     {
-      v[type-1]+=S[i]->Peak;
-      v[type-2]+=S[i]->Today;
+      v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
+      v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
       b[type-1] = true;
       b[type-2] = true;
     }
@@ -81,10 +81,10 @@ void SendToPvOutput(BaseSensor** S)
           for(byte i=0;i<12;i++)
           {
             #ifdef GRAADDAGEN
-              // replace temperature by factor
-              if(i==4 && b[i])
+              // replace voltage(v6) by factor
+              if(i==5)
               {
-                pvout << "&v5=" << T1.GetFactor(G1.Today,hour());
+                pvout << "&v6=" << T1.GetFactor(G1.Today,hour());
               }
               else
             #endif
@@ -115,6 +115,4 @@ void SendToPvOutput(BaseSensor** S)
     }
   }
 }
-
-
 

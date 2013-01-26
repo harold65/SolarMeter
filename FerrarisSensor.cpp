@@ -1,7 +1,6 @@
 #include "FerrarisSensor.h"
 
-FerrarisSensor::FerrarisSensor(byte p1, byte p2, int p, int sid) : 
-BaseSensor(p,sid)
+FerrarisSensor::FerrarisSensor(byte p1, byte p2, int p, int sid, int f) : BaseSensor(p,sid,f)
 {
     pin1 = p1;
     pin2 = p2;
@@ -149,9 +148,9 @@ void FerrarisSensor::CalculateActuals()
 void FerrarisSensor::Status(EthernetClient client)
 {
     BaseSensor::Status(client);
-    client << F("+C=") << thresholdSampleCounter;
+    client << F("<td>C=") << thresholdSampleCounter;
     client << F(" 1=") << threshold1L << "-" << threshold1H << ":" << last1;
-    client << F(" 2=") << threshold2L << "-" << threshold2H << ":" << last2 << endl;
+    client << F(" 2=") << threshold2L << "-" << threshold2H << ":" << last2;
 }
 
 

@@ -1,9 +1,10 @@
 #include "BaseSensor.h"
 
-BaseSensor::BaseSensor(int p,int sid)
+BaseSensor::BaseSensor(int p,int sid, int f)
 {
-   ppu=p;
-   SID=sid;
+    ppu = p;
+    SID = sid;
+    Factor = f;
 }
 
 void BaseSensor::Begin(byte i)
@@ -11,7 +12,7 @@ void BaseSensor::Begin(byte i)
     Actual = 0;
     Peak = 0;
     Today = 0;
-    ee = (i+20)*4; // the eeprom address of this sensor where the last value is saved
+    ee = (i+20) * 4; // the eeprom address of this sensor where the last value is saved
     todayCnt = eeprom_read_dword((uint32_t*) ee); 
     if(todayCnt < 0) todayCnt = 0; // prevent invalid eeprom values
     pulseLength = 0;
@@ -20,12 +21,12 @@ void BaseSensor::Begin(byte i)
 
 void BaseSensor::CheckSensor()
 {
-	// Check sensor must be done by the derived sensor
+    // Check sensor must be done by the derived sensor
 }
 
-void BaseSensor::Loop()
+void BaseSensor::Loop(int m)
 {
-	// Derived sensors can execute non time critical actions here
+    // Derived sensors can execute non time critical actions here
 }
 
 void BaseSensor::Save()
@@ -59,28 +60,31 @@ void BaseSensor::CalculateActuals()
     }
     else
     {
-        if(pulseLength == 0)
-       {
-          return;  // prevent division by zero
-       }
-        // convert to W
-        Actual = 3600000000 / ppu;
-        Actual /= pulseLength;
-        if(Peak < abs(Actual)) Peak = Actual;
+        if(pulseLength != 0)  // prevent division by zero
+        {
+            // convert to W
+            Actual = 3600000000 / ppu;
+            Actual /= pulseLength;
+            if(Peak < abs(Actual)) Peak = Actual;
+        }
     }
     Today = todayCnt * 1000 / ppu;
 }
 
 void BaseSensor::Status(EthernetClient client)
 {
-    client << F("SID=") << SID ;
-    client << F(" Type=") << Type;
-    client << F(" Today=") << Today;
-    client << F(" TodayCnt=") << todayCnt;
-    client << F(" Actual=") << Actual;
-    client << F(" Peak=") << Peak;
-    client << F(" Pulse=") << pulseLength;
-    client << F(" PPU=") << ppu << endl;    
+    const char* td = "<td>";
+    client << td << SID;
+    client << td << Type;
+    client << td << Actual;
+    client << td << Peak;
+    client << td << Today;
+    client << td << Factor;
+    client << td << todayCnt;
+    client << td << eeprom_read_dword((uint32_t*) ee);
+    client << td << ppu;
+    client << td << pulseLength;
 }
+
 
 

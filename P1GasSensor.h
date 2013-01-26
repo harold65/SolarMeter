@@ -7,7 +7,7 @@
 class P1GasSensor : public BaseSensor
 {
   public:
-    P1GasSensor(P1Power* P1port , int sid, byte t);
+    P1GasSensor(P1Power* P1port , int sid, byte t, int f);
     void CalculateActuals();
     void Reset();
   

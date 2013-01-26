@@ -1,6 +1,4 @@
-
 String inString = String("");
-// storage for last page access
 
 void ServeWebClients()
 {
@@ -9,7 +7,7 @@ void ServeWebClients()
   {
     inString = client.readStringUntil('\n');
     client << F("HTTP/1.1 200 OK") << endl;
-    client << F("Content-Type: application/x-javascript") << endl << endl;
+    client << F("Content-Type: text/html") << endl << endl;
     int i=inString.indexOf("save");
     if(i!=-1) SaveValues();
     i=inString.indexOf("?");
@@ -58,23 +56,25 @@ void SaveValues()
 
 void ShowStatus(EthernetClient client)
 {
-  int ee;
-  long eepromValue;
-  client << F(VERSION) << endl;
-  client << DateTime(now()) << endl;
-  client << F("Uptime=") << upTime/24 << "d+" << upTime%24 << "h" << endl;  
+  const char* br = "<br>";
+  client << F("<html><style>td,th {padding:8;text-align:center;}</style>");
+  client << F(VERSION) << br;
+  client << DateTime(now()) << br;
+  client << F("Uptime=") << upTime/24 << "d+" << upTime%24 << "h" << br;  
+  client << F("<table border=\"1\" cellspacing=\"0\">");
+  client << F("<tr><th>ID<th>SID<th>Type<th>Actual<th>Peak<th>Today<th>Factor<th>TodayCnt<th>EEprom<th>ppu<th>Pulse<th>Extra</tr>");
+  
   for(int i=0;i<NUMSENSORS;i++)
   {  
-    client << endl;  
     sensors[i]->CalculateActuals();
+    client << F("<tr><td>") << i;
     sensors[i]->Status(client);
-    ee = (i+20)*4; // the eeprom address of this sensor where the last value is saved
-    eepromValue = eeprom_read_dword((uint32_t*) ee); 
-    client << F(" SensorId=") << i;
-    client << F(", eeprom value=") << eepromValue << endl;
+    client << F("</tr>");
   }
-  client << endl << F("PvOutput response=") << pvResponse << endl;
-  client << F("DNS status=") << DnsStatus << endl;
-  client << F("Last NTP update=") << DateTime(lastTimeUpdate) << endl;
+  client << F("</table>PvOutput response=") << pvResponse << br;
+  client << F("DNS status=") << DnsStatus << br;
+  client << F("Last NTP update=") << DateTime(lastTimeUpdate) << br;
 }
+
+
 

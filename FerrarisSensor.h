@@ -6,7 +6,7 @@
 class FerrarisSensor : public BaseSensor
 {
   public:
-    FerrarisSensor(byte pin1, byte pin2, int p, int sid); // Class constructor
+    FerrarisSensor(byte pin1, byte pin2, int p, int sid, int f); // Class constructor
     void Begin(byte i);            // Initialises the variables in the class
     void SetupThresholds();        // Calculate new thresholds, determined by min/max values
     void CheckSensor();

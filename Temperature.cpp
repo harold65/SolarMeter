@@ -4,26 +4,35 @@
 
 #include "Temperature.h"
 
-Temperature::Temperature(char* stn, int sid) : BaseSensor(1000,sid) // 1000 is a dummy value
+Temperature::Temperature(char* ws, int sid, int f) : BaseSensor(1000,sid, f) // 1000 is a dummy value
 {
-    weatherStation = stn;
-    Type=5; // temperature graph of PvOutput
+    weatherStation = ws;
+    Type = 5; // temperature graph of PvOutput
 }
 
 void Temperature::Begin(byte i)
 {
-    todayCnt=0;
+    todayCnt = 0;
     GetTemperature(); // get the temperature at startup
 }
 
 void Temperature::CalculateActuals()
 {
-  // replace the basefunction by an empty one
+    // Actual is the temperature in 0.1 deg
+    Actual = actual * 10;
 }
-
-void Temperature::NewHour()
+void Temperature::Loop(int m)
 {
-    GetTemperature();
+    // limit the temperature reading to once every 10 minutes 
+    if(m%10==0)
+    {
+        if(needUpdate)
+        {
+            GetTemperature();
+            needUpdate=false;
+        }
+    }
+    else needUpdate=true;
 }
 
 void Temperature::GetTemperature()
@@ -38,12 +47,11 @@ void Temperature::GetTemperature()
         {
             if(buienradarClient.find("<temperatuurGC>"))
             {
-                Actual = buienradarClient.parseFloat();
-                BaseSensor::Actual = Actual;
+                actual = buienradarClient.parseFloat();
                 // Calculate new average
-                Average = (todayCnt * Average) + Actual;
+                average = (todayCnt * average) + actual;
                 todayCnt++;
-                Average /= todayCnt;
+                average /= todayCnt;
             }
         }
         buienradarClient.stop();
@@ -53,25 +61,25 @@ void Temperature::GetTemperature()
 float Temperature::GetFactor(long Gas, int hr)
 {
     // Calculate 'graaddagen' = 18 - average temperature of today
-    float gd = 18 - Average;
-    if (gd<0 || hr==0)
+    float gd = 18 - average;
+    if (gd < 0 || hr == 0)
     { 
-        gd=0;
-        Factor = 0;
+        gd = 0;
+        gdFactor = 0;
     }
     else
     {
         // Factor is gas usage per 'graaddag' extrapolated to the end of the day (*24/Hr)
-        Factor = 2.4 * (Gas / gd) / hr ;
+        gdFactor = 2.4 * (Gas / gd) / hr ;
     }  
-    return Factor;
+    return gdFactor;
 }
 
 void Temperature::Status(EthernetClient client)
 {
     BaseSensor::Status(client);
-    client << F("+Actual:") << Actual;
-    client << F(" Average:") << Average;
-    client << F(" Factor:") << Factor << endl;
+    client << F("<td>average=") << average;
+    client << F(" gdFactor=") << gdFactor;
 }
+
 

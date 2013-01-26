@@ -1,6 +1,6 @@
 #include "P1Power.h"
 
-P1Power::P1Power(HardwareSerial *serIn, int sid, byte t) : BaseSensor(1000,sid) // 1000 is dummy. not used for P1
+P1Power::P1Power(HardwareSerial *serIn, int sid, byte t, int f) : BaseSensor(1000,sid,f) // 1000 is dummy. not used for P1
 {
   Type = t; // default = 24, same as ferraris sensor: log net consumption
   serial = serIn;
@@ -26,7 +26,7 @@ void P1Power::CalculateActuals()
   Today = ((m1+m2)-(m3+m4)) - todayCnt;
 }
 
-void P1Power::Loop()
+void P1Power::Loop(int m)
 {
   while(serial->available())
   {
@@ -102,11 +102,11 @@ void P1Power::ParseBuffer()
 void P1Power::Status(EthernetClient client)
 {
   BaseSensor::Status(client);
-  client << F("+PowerUsage=") << PowerUsage;
+  client << F("<td>PowerUsage=") << PowerUsage;
   client << F(" PowerSolar=") << PowerSolar;
-  client << F(" GasUsage=") << GasUsage << endl;
+  client << F(" GasUsage=") << GasUsage;
   client << F(" M1=") << m1;
   client << F(" M2=") << m2;
   client << F(" M3=") << m3;
-  client << F(" M4=") << m4 << endl;
+  client << F(" M4=") << m4;
 }
