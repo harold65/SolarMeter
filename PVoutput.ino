@@ -1,5 +1,6 @@
 IPAddress ip_pvoutput;
 int DnsStatus;
+int pvResponse;
 
 // This function will contact the DNS server and ask for an IP address of PvOutput
 // If successfull, this address will be used
@@ -26,10 +27,10 @@ void SendToPvOutput(BaseSensor** S)
   float v[12]; // data sum
   bool b[12]; // data present flags
   // start with 0
-  for(byte i=0;i<12;i++)
+  for(byte n=0;n<12;n++)
   { 
-    v[i]=0;
-    b[i]=false;
+    v[n]=0;
+    b[n]=false;
   }
 
   int sid=S[0]->SID;
@@ -106,10 +107,10 @@ void SendToPvOutput(BaseSensor** S)
         }
       }
       // reset the counters for the next round
-      for(byte i=0;i<12;i++)
+      for(byte n=0;n<12;n++)
       {
-        v[i]=0;
-        b[i]=false;
+        v[n]=0;
+        b[n]=false;
       }
       if(i<NUMSENSORS) sid=S[i+1]->SID;
     }

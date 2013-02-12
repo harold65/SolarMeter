@@ -13,20 +13,23 @@ void SendMail()
                 mailClient << F("MAIL FROM:" MAIL_FROM) << endl; // identify sender
                 if(checkResponse())
                 {
-                    mailClient << F("RCPT TO:" MAIL_TO) << endl; // identify recipient
+                   mailClient << F("RCPT TO:" MAIL_TO) << endl; // identify recipient
                     if(checkResponse())
                     {
                         mailClient << F("DATA") << endl;
                         if(checkResponse())
                         {
-                            mailClient << F("Subject:SolarMeter ") << day() << endl << endl; // insert subject
-                            for(byte i=0;i<NUMSENSORS;i++)
+                            mailClient << F("Subject:SolarMeter ") << day() << endl; // insert subject
+                            mailClient << F("Content-type: text/html;") << endl << endl;
+
+                            ShowStatus(mailClient);
+
+                            mailClient << endl << F(".") << endl; // end of mail
+
+		            if(checkResponse())
                             {
-                              sensors[i]->Status(mailClient);
+                                mailClient << F("QUIT") << endl; // terminate connection
                             }
-                            mailClient << F(".") << endl; // end of mail
-                            mailClient << F("QUIT") << endl; // terminate connection
-                            checkResponse();
                         }
                     }
                 }

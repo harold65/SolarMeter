@@ -12,8 +12,8 @@ Temperature::Temperature(char* ws, int sid, int f) : BaseSensor(1000,sid, f) // 
 
 void Temperature::Begin(byte i)
 {
+    BaseSensor::Begin(i); // to initialize other variables
     todayCnt = 0;
-    GetTemperature(); // get the temperature at startup
 }
 
 void Temperature::CalculateActuals()

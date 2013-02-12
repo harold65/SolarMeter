@@ -7,7 +7,7 @@
 //#define USE_LOGGING
 
 // Mail variables. Uncomment the next line and a mail will be sent once a day
-#define USE_MAIL
+//#define USE_MAIL
 #define MAIL_TIME 21 // The default time to mail is 21:00 h
 #define MAIL_TO "mymail@gmail.com" // fill in the destination mail address
 #define MAIL_FROM "arduino@meterkast.nl" // any valid mail address will do here
@@ -22,6 +22,15 @@ static byte dnsserver[] = {192,168,1,1};                          // use the add
                                                                   // or use { 8, 8, 8, 8 } as general DNS server from Google if you have no other option
 static byte gateway[]   = { 192, 168, 1, 1 };
 static byte subnet[]    = { 255, 255, 255, 0 };  
+
+//*****************************************************************
+//#define EXOSITE_KEY "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+//*****************************************************************
+//#define USE_MINDERGAS
+//#define MG_USES_ANALOG_SENSOR G1
+#define MG_USES_P1_SENSOR P1 
+#define MG_KEY "xxxxxxxxxxxxxxxxxxxx"
 
 //*****************************************************************
 // You can find your api-key in the PvOutput settings page, under api-settings

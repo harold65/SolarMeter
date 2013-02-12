@@ -1,8 +1,9 @@
-#define VERSION "V10"
+#define VERSION "V11"
 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
+#include <LiquidCrystal.h>
 #include <Dns.h>
 #include <Time.h>
 #include <FlashMini.h>
@@ -22,7 +23,6 @@ int    lastDay;
 int    lastHour;
 int    lastMinute;
 int    upTime;              // the amount of hours the Arduino is running 
-int    pvResponse;
 EthernetServer server(80);  // the web server is used to serve status calls
 EthernetUDP Udp;
 char   webData[70];
@@ -36,8 +36,11 @@ void setup()
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
     // initialize time server
     Udp.begin(8888);
-    // wait until time is set
-    while(!UpdateTime());
+    // Try to set the time 10 times
+    for(byte i=0;i<10;i++)
+    {
+        if(UpdateTime()) break;
+    }
     #ifdef USE_LOGGING
         // initialize SD card
         SetupSD();
@@ -45,15 +48,20 @@ void setup()
     #endif
     // start listening
     server.begin();
+
     // initialize the sensors
     for(byte i=0;i<NUMSENSORS;i++)
     {
         sensors[i]->Begin(i);
     }
+    #ifdef USE_MINDERGAS
+    GetGasValue();
+    #endif
     lastDay = day();
     lastMinute = minute();
     lastHour = hour();
     upTime = 0;
+
     // start the timer interrupt
     MsTimer2::set(5, Every5ms); // 5ms period
     MsTimer2::start();
@@ -73,6 +81,9 @@ void loop()
     // reset counters at midnight
     if(day()!=lastDay && lastHour==23)
     {
+        #ifdef USE_MINDERGAS
+        SendToMinderGas();
+        #endif   
         lastDay=day();
         for(byte i=0;i<NUMSENSORS;i++)
         {
@@ -98,7 +109,7 @@ void loop()
         if(lastHour==10 || lastHour==22)
         {
             UpdateTime();
-        }
+        } 
         #ifdef USE_MAIL
             if(lastHour==MAIL_TIME)
             {
@@ -131,6 +142,9 @@ void loop()
         if((lastMinute%UPDATEINTERVAL)==0)
         {
             SendToPvOutput(sensors);
+            #ifdef EXOSITE_KEY
+            SendToExosite();
+            #endif
             // reset the maximum for pvoutput
             for(byte i=0;i<NUMSENSORS;i++)
             {

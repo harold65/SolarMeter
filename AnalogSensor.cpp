@@ -38,8 +38,6 @@ void AnalogSensor::CheckSensor()
         {
             sensorIsOn=false;
         }
-        //if(Min>SensorValue) Min = SensorValue;
-        //if(Max<SensorValue) Max = SensorValue;
 
         readCounter=0;
         sensorValue=0;

@@ -26,7 +26,7 @@ class BaseSensor
   long Peak;                                   // Peak value of the last period
   int  SID;                                    // System id where this sensor logs to
   byte Type;                                   // Variable of PvOutput to log to. See userdefs.h for explanation  
-  int Factor;
+  int Factor;                                  // Values will be divided by this number before sending them to pvOutput
   
   protected:
   long todayCnt;                               // today's pulse count

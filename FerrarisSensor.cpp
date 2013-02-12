@@ -1,11 +1,12 @@
 #include "FerrarisSensor.h"
 
-FerrarisSensor::FerrarisSensor(byte p1, byte p2, int p, int sid, int f) : BaseSensor(p,sid,f)
+FerrarisSensor::FerrarisSensor(byte p1, byte p2, int p, int sid, int f) : 
+BaseSensor(p,sid,f)
 {
     pin1 = p1;
     pin2 = p2;
     Type = 24;  // this sensor always logs to the consumption value
-                // and the generation is added to create total consumption
+    // and the generation is added to create total consumption
 }
 
 void FerrarisSensor::Begin(byte i)
@@ -51,7 +52,6 @@ void FerrarisSensor::CheckSensor()
         sum2 += sensorValue2;
         thresholdSampleCounter++;
         // depending on the level of the inputs go to the next state
-        byte oldState = state;
         switch(state)
         {
         case 1:
@@ -138,8 +138,8 @@ void FerrarisSensor::CalculateActuals()
             threshold2H = low2 + range/2;
         }
         // start measuring new range
-        low1 = 5000;
-        low2 = 5000;
+        low1 = 7000;
+        low2 = 7000;
         sum1 = 0;
         sum2 = 0;
         thresholdSampleCounter = 0;
@@ -152,5 +152,6 @@ void FerrarisSensor::Status(EthernetClient client)
     client << F(" 1=") << threshold1L << "-" << threshold1H << ":" << last1;
     client << F(" 2=") << threshold2L << "-" << threshold2H << ":" << last2;
 }
+
 
 

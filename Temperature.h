@@ -13,12 +13,12 @@ class Temperature : public BaseSensor
       void  GetTemperature();
       float GetFactor(long Gas, int hr);
       void  Status(EthernetClient client);
-	private:
+      float gdFactor;
+    private:
       float actual;
       float average;
-      float gdFactor;
       char* weatherStation;
-	  bool needUpdate;
+      bool needUpdate;
 };
 
 #endif
