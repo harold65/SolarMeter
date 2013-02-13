@@ -6,7 +6,7 @@ BaseSensor(p,sid,f)
     pin1 = p1;
     pin2 = p2;
     Type = 24;  // this sensor always logs to the consumption value
-    // and the generation is added to create total consumption
+                // and the generation is added to create total consumption
 }
 
 void FerrarisSensor::Begin(byte i)

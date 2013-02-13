@@ -1,18 +1,18 @@
 #ifdef USE_MINDERGAS
 
-byte mgResponse;
+String mgResponse;
 unsigned long TotalGas;
 
 void GetGasValue()
 {
     #ifdef MG_USES_ANALOG_SENSOR
-    // Update the total counter and store in eeprom
+    // Get the total counter from eeprom
     TotalGas = eeprom_read_dword((uint32_t*) 0);  
     #endif
 
     #ifdef MG_USES_P1_SENSOR
-    // get the gas counter from the P1 sensor
-    TotalGas = MG_USES_P1_SENSOR.GasUsage;
+    // get the actual gas counter from the P1Gas sensor
+    TotalGas = MG_USES_P1_SENSOR.Actual;
     #endif
 }    
     
@@ -22,7 +22,9 @@ void SendToMinderGas()
     GetGasValue();
 
     #ifdef MG_USES_ANALOG_SENSOR
+    // increment the total value with the consumption of today
     TotalGas += MG_USES_ANALOG_SENSOR.Today;
+    // and store it.
     eeprom_write_dword((uint32_t*) 0, TotalGas); 
     #endif
 
@@ -45,16 +47,17 @@ void SendToMinderGas()
         mgClient << dataString << endl;
         // read the response code. Will be in the form of "HTTP 1.1 201"
         // 201 means ok
-        mgClient.parseInt(); // skip the first 1
-        mgClient.parseInt(); // skip the second 1
-        mgResponse = mgClient.parseInt(); // we need the third number
+        mgResponse = mgClient.readStringUntil('\n');
+        //mgClient.parseInt(); // skip the first 1
+        //mgClient.parseInt(); // skip the second 1
+        //mgResponse = mgClient.parseInt(); // we need the third number
         // close connection
         mgClient.stop();
     }
     else
     {
         // no response :-(
-        mgResponse=0;
+        mgResponse="no";
     }
 }
 

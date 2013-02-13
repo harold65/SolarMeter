@@ -1,7 +1,3 @@
-//
-// S0Sensor.cpp
-// Count and store pulses from digital input
-
 #include "AnalogSensor.h"
 
 AnalogSensor::AnalogSensor(int pn, int p, int sid, byte type, int f) : BaseSensor(p,sid,f)

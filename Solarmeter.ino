@@ -82,7 +82,8 @@ void loop()
     if(day()!=lastDay && lastHour==23)
     {
         #ifdef USE_MINDERGAS
-        SendToMinderGas();
+            // upload to mindergas before the dayvalues are reset
+            SendToMinderGas();
         #endif   
         lastDay=day();
         for(byte i=0;i<NUMSENSORS;i++)
@@ -126,7 +127,9 @@ void loop()
         {
             sensors[i]->CalculateActuals();
         }
-
+        #ifdef EXOSITE_KEY
+            SendToExosite();
+        #endif
         #ifdef USE_LOGGING
             WriteDateToLog();
             for(byte i=0;i<NUMSENSORS;i++)
@@ -142,9 +145,6 @@ void loop()
         if((lastMinute%UPDATEINTERVAL)==0)
         {
             SendToPvOutput(sensors);
-            #ifdef EXOSITE_KEY
-            SendToExosite();
-            #endif
             // reset the maximum for pvoutput
             for(byte i=0;i<NUMSENSORS;i++)
             {

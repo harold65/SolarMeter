@@ -105,6 +105,9 @@ void ShowStatus(EthernetClient client)
     #ifdef USE_MINDERGAS
     client << F("mgResponse=") << mgResponse << br;
     #endif
+    #ifdef EXOSITE_KEY
+    client << F("ExResponse=") << exResponse << br;
+    #endif
 }
 
 

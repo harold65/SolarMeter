@@ -1,5 +1,7 @@
 #ifdef EXOSITE_KEY
 
+String exResponse;
+
 void SendToExosite()
 {
     EthernetClient exoSiteClient;
@@ -17,7 +19,7 @@ void SendToExosite()
         v[7]=100*T1.gdFactor;
         
         String str="";
-        for(int i=0;i<8;i++)
+        for(int i=0;i<9;i++)
         {
             if(i>0) str += '&';
             str += i;
@@ -30,9 +32,13 @@ void SendToExosite()
         exoSiteClient << F("Content-Type: application/x-www-form-urlencoded; charset=utf-8") << endl;
         exoSiteClient << F("Content-Length: ") << str.length() << endl << endl;
         exoSiteClient << str << endl;
+        exResponse = exoSiteClient.readStringUntil('\n');
         exoSiteClient.stop();
     }
-
+    else
+    {
+        exResponse = "No";
+    }
 }
 
 #endif

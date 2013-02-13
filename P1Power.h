@@ -1,6 +1,5 @@
 /*
 	P1Serial module tbv uitlezen slimme meter via P1 aansluiting.
-	Werkt alleen in combinatie met Solarmeter V9.
 	Gebaseerd op code van: http://zonnigbreda.blogspot.nl/
 	Dit is de "P1 base + power sensor", die altijd gebruikt moet worden omdat de P1Gas sensor hier gebruik van maakt.
     HKO, 05-01-2013

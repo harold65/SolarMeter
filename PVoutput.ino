@@ -1,6 +1,6 @@
 IPAddress ip_pvoutput;
 int DnsStatus;
-int pvResponse;
+String pvResponse;
 
 // This function will contact the DNS server and ask for an IP address of PvOutput
 // If successfull, this address will be used
@@ -96,14 +96,14 @@ void SendToPvOutput(BaseSensor** S)
           }
           pvout << endl << F("Host: pvoutput.org") << endl << endl;
           // read the response code. 200 means ok
-          pvResponse = pvout.parseInt();
+          pvResponse = pvout.readStringUntil('\n');
           pvout.stop();
           // give pvoutput some time to process the request
           delay(200);
         }
         else // cannnot connect
         {
-          pvResponse=res;
+          pvResponse="No";
         }
       }
       // reset the counters for the next round
