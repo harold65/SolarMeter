@@ -18,7 +18,7 @@ char dt[20];
 char* DateTime(time_t t)
 {
     int y = year(t)-2000;
-    if(y < 0) sprintf(dt,"Invalid");
+    if(y < 0) sprintf(dt,"Never");
     else      sprintf(dt, "%02d.%02d.%02d %02d:%02d:%02d", day(t),month(t),y,hour(t),minute(t),second(t));
     return dt;
 }

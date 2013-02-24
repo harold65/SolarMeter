@@ -1,9 +1,8 @@
-#define VERSION "V11"
+#define VERSION "V11.1"
 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
-#include <LiquidCrystal.h>
 #include <Dns.h>
 #include <Time.h>
 #include <FlashMini.h>
@@ -19,9 +18,9 @@
 //#include <SD.h>
 
 // global variables
-int    lastDay;
-int    lastHour;
-int    lastMinute;
+byte   lastDayReset;
+byte   lastHour;
+byte   lastMinute;
 int    upTime;              // the amount of hours the Arduino is running 
 EthernetServer server(80);  // the web server is used to serve status calls
 EthernetUDP Udp;
@@ -57,7 +56,11 @@ void setup()
     #ifdef USE_MINDERGAS
     GetGasValue();
     #endif
-    lastDay = day();
+    
+    // restore the last day on which the counters were reset
+    lastDayReset = eeprom_read_byte((uint8_t*) 4);
+    // if the eeprom contains illegal data, set it to a useful value
+    if(lastDayReset==0 || lastDayReset>31) lastDayReset=day();
     lastMinute = minute();
     lastHour = hour();
     upTime = 0;
@@ -78,14 +81,13 @@ void Every5ms()
 
 void loop()
 {   
-    // reset counters at midnight
-    if(day()!=lastDay && lastHour==23)
+    // reset counters when todays day is different from the last day the counters were reset
+    if(day()!=lastDayReset)
     {
         #ifdef USE_MINDERGAS
-            // upload to mindergas before the dayvalues are reset
-            SendToMinderGas();
+            // Calculate the new gas metervalue
+            UpdateGas();
         #endif   
-        lastDay=day();
         for(byte i=0;i<NUMSENSORS;i++)
         {
             sensors[i]->Reset();
@@ -95,6 +97,9 @@ void loop()
             CloseLogFile();
             OpenLogFile();
         #endif
+        lastDayReset=day();
+        // store today as the date of the last counter reset
+        eeprom_write_byte((uint8_t*) 4, lastDayReset);
     }
 
     if(hour()!=lastHour)
@@ -130,6 +135,13 @@ void loop()
         #ifdef EXOSITE_KEY
             SendToExosite();
         #endif
+
+        #ifdef USE_MINDERGAS
+            // this function will not do anything until the countdown timer is finished
+            SendToMinderGas();
+        #endif
+
+
         #ifdef USE_LOGGING
             WriteDateToLog();
             for(byte i=0;i<NUMSENSORS;i++)

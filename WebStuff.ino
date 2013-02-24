@@ -103,13 +103,20 @@ void ShowStatus(EthernetClient client)
     client << F("Mindergas=") << TotalGas << br;
     #endif
     #ifdef USE_MINDERGAS
-    client << F("mgResponse=") << mgResponse << br;
+    client << F("mgUpload=") << DateTime(mgUploadTime) << br;
     #endif
     #ifdef EXOSITE_KEY
     client << F("ExResponse=") << exResponse << br;
     #endif
+    client << F("Free=") << freeRam() << br;
 }
 
 
+int freeRam() 
+{
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
 
 
