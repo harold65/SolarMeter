@@ -1,4 +1,4 @@
-#define VERSION "V11.1"
+#define VERSION "V11.2"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -7,6 +7,7 @@
 #include <Time.h>
 #include <FlashMini.h>
 #include <MsTimer2.h>
+#include <avr/wdt.h>
 #include "S0Sensor.h"
 #include "P1GasSensor.h"
 #include "P1Power.h"
@@ -64,7 +65,8 @@ void setup()
     lastMinute = minute();
     lastHour = hour();
     upTime = 0;
-
+    
+    SetupWatchdog();
     // start the timer interrupt
     MsTimer2::set(5, Every5ms); // 5ms period
     MsTimer2::start();
@@ -77,13 +79,16 @@ void Every5ms()
     {
         sensors[i]->CheckSensor();
     }
+    CheckWatchdog();
 }
 
 void loop()
 {   
+
     // reset counters when todays day is different from the last day the counters were reset
     if(day()!=lastDayReset)
     {
+        busy(1);
         #ifdef USE_MINDERGAS
             // Calculate the new gas metervalue
             UpdateGas();
@@ -104,6 +109,7 @@ void loop()
 
     if(hour()!=lastHour)
     {
+        busy(2);
         lastHour=hour();
         upTime++;
         // save the daily values every hour
@@ -127,6 +133,7 @@ void loop()
     // update every minute
     if(minute()!=lastMinute)
     {
+        busy(3);
         lastMinute=minute();
         for(byte i=0;i<NUMSENSORS;i++)
         {
@@ -164,13 +171,16 @@ void loop()
             }
         }
     }
+    busy(4);
     // let all sensors do other stuff
     for(byte i=0;i<NUMSENSORS;i++)
     {
       sensors[i]->Loop(lastMinute);
     }
+    busy(5);
     // see if there are clients to serve
     ServeWebClients();
+    busy(0);
     // give the thernet shield some time to rest
     delay(50);
 }

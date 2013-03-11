@@ -108,6 +108,7 @@ void ShowStatus(EthernetClient client)
     #ifdef EXOSITE_KEY
     client << F("ExResponse=") << exResponse << br;
     #endif
+    client << F("WD otr=") << eeprom_read_byte ((uint8_t*)EE_CTR) << br;
     client << F("Free=") << freeRam() << br;
 }
 
