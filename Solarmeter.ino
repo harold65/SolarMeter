@@ -29,6 +29,7 @@ char   webData[70];
 #ifdef USE_LOGGING
   File   logFile;
 #endif
+#define EE_RESETDAY 4
 
 void setup()
 {
@@ -59,7 +60,7 @@ void setup()
     #endif
     
     // restore the last day on which the counters were reset
-    lastDayReset = eeprom_read_byte((uint8_t*) 4);
+    lastDayReset = eeprom_read_byte((uint8_t*) EE_RESETDAY);
     // if the eeprom contains illegal data, set it to a useful value
     if(lastDayReset==0 || lastDayReset>31) lastDayReset=day();
     lastMinute = minute();
@@ -104,7 +105,7 @@ void loop()
         #endif
         lastDayReset=day();
         // store today as the date of the last counter reset
-        eeprom_write_byte((uint8_t*) 4, lastDayReset);
+        eeprom_write_byte((uint8_t*) EE_RESETDAY, lastDayReset);
     }
 
     if(hour()!=lastHour)
@@ -139,10 +140,11 @@ void loop()
         {
             sensors[i]->CalculateActuals();
         }
+        busy(31);
         #ifdef EXOSITE_KEY
             SendToExosite();
         #endif
-
+        busy(32);
         #ifdef USE_MINDERGAS
             // this function will not do anything until the countdown timer is finished
             SendToMinderGas();
@@ -159,11 +161,12 @@ void loop()
             logFile << endl;
             logFile.flush(); 
         #endif
-        
+        busy(33);
         // update every 5 minutes or whatever is set in userdefs
         if((lastMinute%UPDATEINTERVAL)==0)
         {
             SendToPvOutput(sensors);
+            busy(34);
             // reset the maximum for pvoutput
             for(byte i=0;i<NUMSENSORS;i++)
             {
@@ -181,7 +184,7 @@ void loop()
     // see if there are clients to serve
     ServeWebClients();
     busy(0);
-    // give the thernet shield some time to rest
+    // give the ethernet shield some time to rest
     delay(50);
 }
 

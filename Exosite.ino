@@ -17,6 +17,7 @@ void SendToExosite()
         v[5]=G1.Today;
         v[6]=T1.Actual;
         v[7]=100*T1.gdFactor;
+        v[8]=freeRam();
         
         String str="";
         for(int i=0;i<9;i++)

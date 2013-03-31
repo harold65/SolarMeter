@@ -53,6 +53,8 @@ void SendToPvOutput(BaseSensor** S)
       // total consumption is production + net consumption
       v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
       v[3] = v[1] + (float)(S[i]->Actual) / S[i]->Factor;
+      // prevent negative consumption
+      if(v[3]<0) v[3]=1;
       b[2] = true;
       b[3] = true;
     }

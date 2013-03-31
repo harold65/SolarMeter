@@ -14,7 +14,6 @@ void BaseSensor::Begin(byte i)
     Today = 0;
     ee = (i+20) * 4; // the eeprom address of this sensor where the last value is saved
     todayCnt = eeprom_read_dword((uint32_t*) ee); 
-    if(todayCnt < 0) todayCnt = 0; // prevent invalid eeprom values
     pulseLength = 0;
     lastMillis = 0;
 }
@@ -81,7 +80,7 @@ void BaseSensor::Status(EthernetClient client)
     client << td << Today;
     client << td << Factor;
     client << td << todayCnt;
-    client << td << eeprom_read_dword((uint32_t*) ee);
+    client << td << (long)eeprom_read_dword((uint32_t*) ee);
     client << td << ppu;
     client << td << pulseLength;
 }
