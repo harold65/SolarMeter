@@ -7,31 +7,32 @@ int busyCounter;
 
 void SetupWatchdog()
 {
+    #ifdef USE_WD
     // set watchdog timeout to 4 seconds
     wdt_enable(WDTO_4S);
-	// initialize counters
+    #endif
+    // initialize counters
     busyCounter = 0;
     busyState = 0;
 }
 
 void busy(byte function)
 {
-    wdt_reset();
+    if(function==0)
+    {
+        busyCounter=0;
+    }
     if(busyState!=function)
     {
-        //Serial << function <<endl;
         busyState = function;
-        //lcd.setCursor(0,0);
-        //lcd << busyState << "  ";
     }
 }
 
 // this is called every 5ms to keep the watchdog from resetting the board
 void CheckWatchdog()
 {
-	// increment the counter as long as we are executing a function
-    if(busyState>0) busyCounter++;
-    else            busyCounter=0;
+    // increment the counter as long as we are executing a function
+    busyCounter++;
     
     // keep resetting the watchdog until busycounter gets really big
     // 12000 * 5ms + 4s = 64 seconds of inactivity before a reset occurs
@@ -46,14 +47,11 @@ void CheckWatchdog()
     {
         // while waiting for the reset-by watchdog, save the current busystate
         eeprom_write_byte ((uint8_t*)EE_STATE, busyState);
-		// increment the watchdog reset counter
+        // increment the watchdog reset counter
         byte ctr = eeprom_read_byte ((uint8_t*)EE_CTR) + 1;
         eeprom_write_byte ((uint8_t*)EE_CTR, ctr);
         // save all counters
         SaveValues();
-        // Set led on to indicate a reset is coming
-        pinMode(13,OUTPUT);
-        digitalWrite(13,1);
         // wait for the reset to come
         while(1); 
     }

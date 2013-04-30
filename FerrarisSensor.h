@@ -11,7 +11,7 @@ class FerrarisSensor : public BaseSensor
     void SetupThresholds();        // Calculate new thresholds, determined by min/max values
     void CheckSensor();
     void CalculateActuals();
-    void Status(EthernetClient client); // Dump status to ethernet
+    void Status(Print& client); // Dump status to ethernet
 
   private:
     bool forward;		   // Current spinning direction

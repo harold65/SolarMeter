@@ -145,7 +145,7 @@ void FerrarisSensor::CalculateActuals()
         thresholdSampleCounter = 0;
     }
 }
-void FerrarisSensor::Status(EthernetClient client)
+void FerrarisSensor::Status(Print& client)
 {
     BaseSensor::Status(client);
     client << F("<td>C=") << thresholdSampleCounter;

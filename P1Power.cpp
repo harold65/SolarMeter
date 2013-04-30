@@ -99,7 +99,7 @@ void P1Power::ParseBuffer()
   }
 }
 
-void P1Power::Status(EthernetClient client)
+void P1Power::Status(Print& client)
 {
   BaseSensor::Status(client);
   client << F("<td>PowerUsage=") << PowerUsage;

@@ -14,7 +14,7 @@ class BaseSensor
   virtual void CheckSensor();                  // check the input and update counters (called from 5ms interrupt)
   virtual void Loop(int m);                    // Called from main loop				
   virtual void CalculateActuals();             // Convert all counters according to the pulses per unit
-  virtual void Status(EthernetClient client);  // Dump status to ethernet
+  virtual void Status(Print& client);          // Dump status to ethernet
   virtual void Reset();                        // Reset day-counter
   virtual void Save();                         // Save day-counter
   virtual void Update(long Value);             // Update and save the day counter

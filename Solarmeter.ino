@@ -1,4 +1,4 @@
-#define VERSION "V11.2"
+#define VERSION "V11.3"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -8,12 +8,15 @@
 #include <FlashMini.h>
 #include <MsTimer2.h>
 #include <avr/wdt.h>
+#include <OneWire.h>
+
 #include "S0Sensor.h"
 #include "P1GasSensor.h"
 #include "P1Power.h"
 #include "AnalogSensor.h"
 #include "FerrarisSensor.h"
 #include "Temperature.h"
+#include "DS_Temperature.h"
 #include "userdefs.h"
 
 //#include <SD.h>
@@ -67,7 +70,9 @@ void setup()
     lastHour = hour();
     upTime = 0;
     
-    SetupWatchdog();
+    #ifdef USE_WD
+      SetupWatchdog();
+    #endif
     // start the timer interrupt
     MsTimer2::set(5, Every5ms); // 5ms period
     MsTimer2::start();
@@ -80,7 +85,9 @@ void Every5ms()
     {
         sensors[i]->CheckSensor();
     }
-    CheckWatchdog();
+    #ifdef USE_WD
+      CheckWatchdog();
+    #endif
 }
 
 void loop()

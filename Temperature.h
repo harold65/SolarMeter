@@ -12,7 +12,7 @@ class Temperature : public BaseSensor
       void  CalculateActuals();
       void  GetTemperature();
       float GetFactor(long Gas, int hr);
-      void  Status(EthernetClient client);
+      void  Status(Print& client);
       float gdFactor;
     private:
       float actual;

@@ -9,15 +9,8 @@ void SendToExosite()
     if (exoSiteClient.connect("m2.exosite.com",80)) 
     {
         long v[9];
-        v[0]=S1.Actual;
-        v[1]=S1.Today;
-        v[2]=F1.Actual;
-        v[3]=F1.Today;
-        v[4]=G1.Actual;
-        v[5]=G1.Today;
-        v[6]=T1.Actual;
-        v[7]=100*T1.gdFactor;
-        v[8]=freeRam();
+        
+        #include "exosite.h"
         
         String str="";
         for(int i=0;i<9;i++)

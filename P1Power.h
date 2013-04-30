@@ -16,7 +16,7 @@ class P1Power : public BaseSensor
     P1Power(HardwareSerial* serIn, int sid, byte t, int f); 
     void Begin(byte i);
     void CalculateActuals();            // Convert P1 data to actual and day values
-    void Status(EthernetClient client); // Dump status to ethernet    
+    void Status(Print& client); // Dump status to ethernet    
     void Reset();                       // Reset day-counters
     void Loop(int m);                   // scan the P1 port in the main loop
     	

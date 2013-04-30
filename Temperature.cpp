@@ -75,7 +75,7 @@ float Temperature::GetFactor(long Gas, int hr)
     return gdFactor;
 }
 
-void Temperature::Status(EthernetClient client)
+void Temperature::Status(Print& client)
 {
     BaseSensor::Status(client);
     client << F("<td>avg=") << average;

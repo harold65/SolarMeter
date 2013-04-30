@@ -70,7 +70,7 @@ void BaseSensor::CalculateActuals()
     Today = todayCnt * 1000 / ppu;
 }
 
-void BaseSensor::Status(EthernetClient client)
+void BaseSensor::Status(Print& client)
 {
     const char* td = "<td>";
     client << td << SID;
