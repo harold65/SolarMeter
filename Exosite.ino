@@ -1,6 +1,6 @@
 #ifdef EXOSITE_KEY
 
-String exResponse;
+int exResponse;
 
 void SendToExosite()
 {
@@ -12,8 +12,8 @@ void SendToExosite()
         
         #include "exosite.h"
         
-        String str="";
-        for(int i=0;i<9;i++)
+        String str = "";
+        for(int i = 0; i < 9; i++)
         {
             if(i>0) str += '&';
             str += i;
@@ -26,12 +26,12 @@ void SendToExosite()
         exoSiteClient << F("Content-Type: application/x-www-form-urlencoded; charset=utf-8") << endl;
         exoSiteClient << F("Content-Length: ") << str.length() << endl << endl;
         exoSiteClient << str << endl;
-        exResponse = exoSiteClient.readStringUntil('\n');
+        exResponse = exoSiteClient.parseInt();
         exoSiteClient.stop();
     }
     else
     {
-        exResponse = "No";
+        exResponse = 0;
     }
 }
 

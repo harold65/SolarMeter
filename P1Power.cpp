@@ -32,7 +32,7 @@ void P1Power::Loop(int m)
   {
     char c = serial->read(); 
 
-    if (c == '\n' || bufpos==BUFSIZE-1)
+    if (c == '\n' || bufpos == BUFSIZE-1)
     {
       Serial.println(bufpos);
       buffer[bufpos] = '\0';
@@ -70,31 +70,31 @@ void P1Power::ParseBuffer()
     { 
       tl *= 1000;
       tl += tld;
-      if(i==1)
+      if(i == 1)
       {
-        if(j==1) m1 = tl;
-        if(j==2) m2 = tl;
+        if(j == 1) m1 = tl;
+        if(j == 2) m2 = tl;
       }
-      if(i==2)
+      if(i == 2)
       {
-        if(j==1) m3 = tl;
-        if(j==2) m4 = tl;
+        if(j == 1) m3 = tl;
+        if(j == 2) m4 = tl;
       }
     }
     // gas definition: 0-1:24.3.0
-    if (sscanf(buffer,"0-1:24.%d.%d",&i,&j)==2)
+    if (sscanf(buffer,"0-1:24.%d.%d",&i,&j) == 2)
     {
-	  if(i==3 && j==0) readnextLine = true; // the actual gas counter is found on the next line
+	  if(i == 3 && j == 0) readnextLine = true; // the actual gas counter is found on the next line
     }
   
     // Actual Consumption: 1-0:1.7.0(0000.50*kW)
     // Actual Generation:  1-0:2.7.0(0001.20*kW)
-    if (sscanf(buffer,"1-0:%d.7.0(%ld.%ld" , &i, &tl , &tld)==3)
+    if (sscanf(buffer,"1-0:%d.7.0(%ld.%ld" , &i, &tl , &tld) == 3)
     { 
       tl *= 1000;
       tl += tld * 10;
-      if(i==1) PowerUsage = tl;
-      if(i==2) PowerSolar = tl;
+      if(i == 1) PowerUsage = tl;
+      if(i == 2) PowerSolar = tl;
     }
   }
 }

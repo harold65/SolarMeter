@@ -4,6 +4,7 @@
 unsigned long mgUploadTime;
 unsigned long TotalGas;
 byte GasCountdown;
+int mgResponse;
 
 void GetGasValue()
 {
@@ -43,7 +44,7 @@ void SendToMinderGas()
         {
             // start the upload when the counter reaches 0
             EthernetClient mgClient;
-            time_t t = now()-SECS_PER_DAY; // we want to upload the gas usage of yesterday so rewind the clock for 1 day
+            time_t t = now() - SECS_PER_DAY; // we want to upload the gas usage of yesterday so rewind the clock for 1 day
             // try to connect to minderGas
             if (mgClient.connect("mindergas.nl",80)) 
             {
@@ -60,13 +61,14 @@ void SendToMinderGas()
                 // send the data
                 mgClient << dataString << endl;
                 mgUploadTime = now();
+                mgResponse = mgClient.parseInt();
                 // close connection
                 mgClient.stop();
             }
             else
             {
                 // no response :-(
-                // do not update anything
+                mgResponse = 0;
             }
         }
     }

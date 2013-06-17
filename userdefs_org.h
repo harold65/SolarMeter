@@ -89,13 +89,14 @@ S0Sensor  S1(2,1000,2222,2,1);   // S0 sensor connected to pin 2, logging to var
 //   Temperature is logged to v5
 DS_Temperature T2(6,10500,1);
 //*****************************************************************
-// Ferrarissensors have 4 parameters: 
-//   1: The analog input of the right sensor
-//   2: The analog input of the left sensor
+// Ferrarissensors have 5 parameters: 
+//   1: The analog input of the left sensor
+//   2: The analog input of the right sensor
 //   3: The number of revolutions of the disc for 1kWh
 //   4: The SID
+//   5: The factor for correction
 //   This sensor always logs to variable 3 and 4
-//FerrarisSensor F1(A3,A4,250,2222);
+//FerrarisSensor F1(A3,A4,250,2222,1);
 //*****************************************************************
 // Smartmeter Power sensor has 4 parameters: 
 //   1: Serial object. Mega2560: on Serial1. Uno etc: Serial watch out: Serial not working together with usb!

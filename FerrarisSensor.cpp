@@ -20,10 +20,10 @@ void FerrarisSensor::Begin(byte i)
     input2 = false;
     // variables for auto adjusting thresholds
     thresholdSampleCounter = 0;
-    low1=5000;        
-    low2=5000;
-    sum1=0;
-    sum2=0;
+    low1 = 5000;        
+    low2 = 5000;
+    sum1 = 0;
+    sum2 = 0;
     state = 1;    // 1=on/on 2=off/on 2=off/off 4=on/off
     sensorValue1 = 0;
     sensorValue2 = 0;
@@ -36,15 +36,15 @@ void FerrarisSensor::CheckSensor()
     sensorValue1 += analogRead(pin1);
     sensorValue2 += analogRead(pin2);
     readCounter++;
-    if(readCounter==6)
+    if(readCounter == 6)
     {
         last1 = sensorValue1;
         last2 = sensorValue2;
         // determine the digital state
-        if(sensorValue1 > threshold1H) input1=true;
-        if(sensorValue1 < threshold1L) input1=false;
-        if(sensorValue2 > threshold2H) input2=true;
-        if(sensorValue2 < threshold2L) input2=false;
+        if(sensorValue1 > threshold1H) input1 = true;
+        if(sensorValue1 < threshold1L) input1 = false;
+        if(sensorValue2 > threshold2H) input2 = true;
+        if(sensorValue2 < threshold2L) input2 = false;
         // keep track of the range
         if(low1 > sensorValue1) low1 = sensorValue1;
         if(low2 > sensorValue2) low2 = sensorValue2;

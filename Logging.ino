@@ -20,7 +20,7 @@
       if(SD_OK)
       {
           char fileName[20];
-          int fileCounter=0;
+          int fileCounter = 0;
           // scan card until file not found
           do
           {

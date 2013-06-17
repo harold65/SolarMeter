@@ -29,10 +29,10 @@ void Temperature::Loop(int m)
         if(needUpdate)
         {
             GetTemperature();
-            needUpdate=false;
+            needUpdate = false;
         }
     }
-    else needUpdate=true;
+    else needUpdate = true;
 }
 
 void Temperature::GetTemperature()

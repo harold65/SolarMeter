@@ -5,19 +5,19 @@ void SendMail()
 {
     if(mailClient.connect(MAIL_SERVER,25))
     {
-        if(checkResponse())
+        if(CheckResponse())
         {
             mailClient << F("HELO Arduino") << endl; // say hello
-            if(checkResponse())
+            if(CheckResponse())
             {
                 mailClient << F("MAIL FROM:" MAIL_FROM) << endl; // identify sender
-                if(checkResponse())
+                if(CheckResponse())
                 {
                    mailClient << F("RCPT TO:" MAIL_TO) << endl; // identify recipient
-                    if(checkResponse())
+                    if(CheckResponse())
                     {
                         mailClient << F("DATA") << endl;
-                        if(checkResponse())
+                        if(CheckResponse())
                         {
                             mailClient << F("Subject:SolarMeter ") << day() << endl; // insert subject
                             mailClient << F("Content-type: text/html;") << endl << endl;
@@ -26,7 +26,7 @@ void SendMail()
 
                             mailClient << endl << F(".") << endl; // end of mail
 
-		            if(checkResponse())
+		            if(CheckResponse())
                             {
                                 mailClient << F("QUIT") << endl; // terminate connection
                             }
@@ -39,18 +39,21 @@ void SendMail()
     }
 }
 
-boolean checkResponse()
+boolean CheckResponse()
 {
-    long timer=millis();
-    while(millis()-timer < 5000)
-    {
-        if(mailClient.available())
-        {
-            char c = mailClient.read();
-            if(c=='\n') return true;
-        }
-    }
-    return false;
+  return mailClient.find("\n");
+  
+//    long timer = millis();
+ //   while(millis() - timer < 5000)
+  //  {
+   //     if(mailClient.available())
+    //    {
+     //       char c = mailClient.read();
+      //      if(c=='\n') return true;
+       // }
+   // }
+   // return false;
 }
+
 
 #endif

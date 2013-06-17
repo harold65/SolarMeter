@@ -1,6 +1,6 @@
 IPAddress ip_pvoutput;
 int DnsStatus;
-String pvResponse;
+int pvResponse;
 
 // This function will contact the DNS server and ask for an IP address of PvOutput
 // If successfull, this address will be used
@@ -27,52 +27,54 @@ void SendToPvOutput(BaseSensor** S)
   float v[12]; // data sum
   bool b[12]; // data present flags
   // start with 0
-  for(byte n=0;n<12;n++)
+  for(byte n = 0; n < 12; n++)
   { 
-    v[n]=0;
-    b[n]=false;
+    v[n] = 0;
+    b[n] = false;
   }
+  
+  CheckIpPv(); // update the ipaddress via DNS
+  
+  float production = 0;
+  int sid = S[0]->SID;
 
-  int sid=S[0]->SID;
-
-  for(byte i=0;i<NUMSENSORS;i++) // scan through the sensor array
+  for(byte i = 0; i<NUMSENSORS; i++) // scan through the sensor array
   {
     byte type = S[i]->Type;
-    if(type==5)       //temperature
+    switch(type)
     {
-      v[type-1] += (float)(S[i]->Actual) / S[i]->Factor;
-      b[type-1] = true;
-    }
-    else if(type==6)  //voltage
-    {
-      v[type-1] += (float)(S[i]->Today) / S[i]->Factor;
-      b[type-1] = true;
-    }
-    else if(type==24)  //ferraris or P1
-    {
-      // total consumption is production + net consumption
-      v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
-      v[3] = v[1] + (float)(S[i]->Actual) / S[i]->Factor;
-      // prevent negative consumption
-      if(v[3]<0) v[3]=1;
-      b[2] = true;
-      b[3] = true;
-    }
-    else  // S0 sensors
-    {
-      v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
-      v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
-      b[type-1] = true;
-      b[type-2] = true;
+      // temperature
+      case 5:   v[type-1] += (float)(S[i]->Actual) / S[i]->Factor;
+                b[type-1] = true;
+                break;
+      //voltage
+      case 6:   v[type-1] += (float)(S[i]->Today) / S[i]->Factor;
+                b[type-1] = true;
+                break;
+      //ferraris or P1
+      case 24:  // total consumption is production + net consumption
+                v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
+                v[3] = v[1] + production / S[i]->Factor;
+                // prevent negative consumption
+                if(v[3]<0) v[3]=1;
+                b[2] = true;
+                b[3] = true;
+                break;
+      // production sensor. log the actual value. This is used by sensor type 24.
+      case 0:   production += (float)(S[i]->Actual) / S[i]->Factor;
+      // other sensors (including type 0). Log Peak and total
+      default:  v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
+                v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
+                b[type-1] = true;
+                b[type-2] = true;
     }
 
-    if(i==NUMSENSORS-1 || S[i+1]->SID!=sid)
+    if(i == NUMSENSORS-1 || S[i+1]->SID != sid)
     {
       if(sid > 0) // only upload if the sid is valid
       {
-        CheckIpPv(); // update the ipaddress via DNS
         int res = pvout.connect(ip_pvoutput,80);
-        if(res==1) // connection successfull
+        if(res == 1) // connection successfull
         {
           pvout << F("GET /service/r2/addstatus.jsp");
           pvout << F("?key=" PVOUTPUT_API_KEY);
@@ -81,7 +83,7 @@ void SendToPvOutput(BaseSensor** S)
           pvout << webData;
           sprintf(webData, "&t=%02d:%02d", hour(),minute());
           pvout << webData;
-          for(byte i=0;i<12;i++)
+          for(byte i = 0; i < 12; i++)
           {
             #ifdef GRAADDAGEN
               // replace voltage(v6) by factor
@@ -98,22 +100,23 @@ void SendToPvOutput(BaseSensor** S)
           }
           pvout << endl << F("Host: pvoutput.org") << endl << endl;
           // read the response code. 200 means ok
-          pvResponse = pvout.readStringUntil('\n');
+          pvResponse = pvout.parseInt();
           pvout.stop();
           // give pvoutput some time to process the request
           delay(200);
         }
         else // cannnot connect
         {
-          pvResponse="No";
+          pvResponse=res;
         }
       }
       // reset the counters for the next round
-      for(byte n=0;n<12;n++)
+      for(byte n = 0; n < 12; n++)
       {
-        v[n]=0;
-        b[n]=false;
+        v[n] = 0;
+        b[n] = false;
       }
+      production = 0;
       if(i<NUMSENSORS) sid=S[i+1]->SID;
     }
   }

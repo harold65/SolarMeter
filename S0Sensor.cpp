@@ -18,12 +18,12 @@ void S0Sensor::CheckSensor()
     // read the digital input
     bool solarInput = digitalRead(pin);
     // rising edge?
-    if(solarInput && sensorIsOn==false)
+    if(solarInput && sensorIsOn == false)
     {
         sensorIsOn=true;
     }
     // falling edge?
-    if(!solarInput && sensorIsOn==true)
+    if(!solarInput && sensorIsOn == true)
     {
         // store the time between the last two pulses
         pulseLength = millis() - lastMillis;
@@ -31,6 +31,6 @@ void S0Sensor::CheckSensor()
         lastMillis = millis();
         // update counters
         todayCnt++;
-        sensorIsOn=false;
+        sensorIsOn = false;
     }
 }

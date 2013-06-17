@@ -24,32 +24,32 @@ void ReadValue(String input,int i)
     // string format is "?0=12345"
     //                  "?3=-12345"
     //                  "?G=12345"
-    long val=0;
-    bool neg=false;
-    int j=i+3;
-    int address = input[i+1]-'0';
+    long val = 0;
+    bool neg = false;
+    int j = i + 3;
+    int address = input[i+1] - '0';
     #ifdef MG_USES_ANALOG_SENSOR
-    if((address>=0 && address<NUMSENSORS) || address==23) 
+    if((address >= 0 && address < NUMSENSORS) || address == 23) 
     #else
-    if(address>=0 && address<NUMSENSORS) 
+    if(address >= 0 && address < NUMSENSORS) 
     #endif
     {
-        char c=input[j];
-        if(c=='-')
+        char c = input[j];
+        if(c == '-')
         {
-            neg=true;
-            j++;
-            c=input[j];
+            neg = true;
+            j ++;
+            c = input[j];
         }
-        while(c>='0' && c<='9')
+        while(c >= '0' && c <= '9')
         {
-            val = 10*val + (c-'0');
-            j++;
-            c=input[j];
+            val = 10 * val + (c - '0');
+            j ++;
+            c = input[j];
         }
-        if(neg) val=-val;
+        if(neg) val = -val;
         #ifdef MG_USES_ANALOG_SENSOR
-        if(address==23) // address = 'G' (gas)
+        if(address == 23) // address = 'G' (gas)
         {
             TotalGas = val - MG_USES_ANALOG_SENSOR.Today; // calculate the value of last midnight
             eeprom_write_dword((uint32_t*) 0, TotalGas);  // store gas total in 0 
@@ -65,7 +65,7 @@ void ReadValue(String input,int i)
 
 void SaveValues()
 {
-    for(byte i=0;i<NUMSENSORS;i++)
+    for(byte i = 0; i < NUMSENSORS; i++)
     {
         sensors[i]->Save();
     }
@@ -73,7 +73,7 @@ void SaveValues()
 
 void ResetValues()
 {
-    for(byte i=0;i<NUMSENSORS;i++)
+    for(byte i = 0; i < NUMSENSORS; i++)
     {
         sensors[i]->Reset();
     }
@@ -113,7 +113,6 @@ void ShowStatus(EthernetClient client)
     client << F("Reset Day=") << eeprom_read_byte ((uint8_t*)EE_RESETDAY) << br;
     client << F("Free=") << freeRam() << br;
 }
-
 
 int freeRam() 
 {

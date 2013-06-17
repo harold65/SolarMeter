@@ -8,7 +8,7 @@
 #include <FlashMini.h>
 #include <MsTimer2.h>
 #include <avr/wdt.h>
-#include <OneWire.h>
+#include <utility/w5100.h>
 
 #include "S0Sensor.h"
 #include "P1GasSensor.h"
@@ -16,7 +16,6 @@
 #include "AnalogSensor.h"
 #include "FerrarisSensor.h"
 #include "Temperature.h"
-#include "DS_Temperature.h"
 #include "userdefs.h"
 
 //#include <SD.h>
@@ -38,10 +37,13 @@ void setup()
 {
     // initialize network
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
+    // set connect timeout to 2.5 seconds
+    W5100.setRetransmissionTime(5000); // 500ms per try
+    W5100.setRetransmissionCount(5);
     // initialize time server
     Udp.begin(8888);
     // Try to set the time 10 times
-    for(byte i=0;i<10;i++)
+    for(byte i = 0; i < 10; i++)
     {
         if(UpdateTime()) break;
     }
@@ -54,7 +56,7 @@ void setup()
     server.begin();
 
     // initialize the sensors
-    for(byte i=0;i<NUMSENSORS;i++)
+    for(byte i = 0; i < NUMSENSORS; i++)
     {
         sensors[i]->Begin(i);
     }
@@ -65,7 +67,7 @@ void setup()
     // restore the last day on which the counters were reset
     lastDayReset = eeprom_read_byte((uint8_t*) EE_RESETDAY);
     // if the eeprom contains illegal data, set it to a useful value
-    if(lastDayReset==0 || lastDayReset>31) lastDayReset=day();
+    if(lastDayReset == 0 || lastDayReset > 31) lastDayReset = day();
     lastMinute = minute();
     lastHour = hour();
     upTime = 0;
@@ -81,7 +83,7 @@ void setup()
 // check and update all counters every 5ms.
 void Every5ms()
 {
-    for(byte i=0;i<NUMSENSORS;i++)
+    for(byte i = 0; i < NUMSENSORS; i++)
     {
         sensors[i]->CheckSensor();
     }
@@ -92,16 +94,16 @@ void Every5ms()
 
 void loop()
 {   
-
+    time_t nu = now();
     // reset counters when todays day is different from the last day the counters were reset
-    if(day()!=lastDayReset)
+    if(day(nu) != lastDayReset)
     {
         busy(1);
         #ifdef USE_MINDERGAS
             // Calculate the new gas metervalue
             UpdateGas();
         #endif   
-        for(byte i=0;i<NUMSENSORS;i++)
+        for(byte i = 0; i < NUMSENSORS; i++)
         {
             sensors[i]->Reset();
         }
@@ -110,28 +112,28 @@ void loop()
             CloseLogFile();
             OpenLogFile();
         #endif
-        lastDayReset=day();
+        lastDayReset = day(nu);
         // store today as the date of the last counter reset
         eeprom_write_byte((uint8_t*) EE_RESETDAY, lastDayReset);
     }
 
-    if(hour()!=lastHour)
+    if(hour(nu) != lastHour)
     {
         busy(2);
-        lastHour=hour();
+        lastHour = hour(nu);
         upTime++;
         // save the daily values every hour
-        for(byte i=0;i<NUMSENSORS;i++)
+        for(byte i = 0; i < NUMSENSORS; i++)
         {
             sensors[i]->Save();
         }
         // sync the time at fixed interval
-        if(lastHour==10 || lastHour==22)
+        if(lastHour == 10 || lastHour == 22)
         {
             UpdateTime();
         } 
         #ifdef USE_MAIL
-            if(lastHour==MAIL_TIME)
+            if(lastHour == MAIL_TIME)
             {
                 SendMail();
             }
@@ -139,28 +141,24 @@ void loop()
     }
 
     // update every minute
-    if(minute()!=lastMinute)
+    if(minute(nu) != lastMinute)
     {
         busy(3);
-        lastMinute=minute();
-        for(byte i=0;i<NUMSENSORS;i++)
+        lastMinute = minute(nu);
+        for(byte i = 0; i < NUMSENSORS; i++)
         {
             sensors[i]->CalculateActuals();
         }
         busy(31);
-        #ifdef EXOSITE_KEY
-            SendToExosite();
-        #endif
-        busy(32);
+
         #ifdef USE_MINDERGAS
             // this function will not do anything until the countdown timer is finished
             SendToMinderGas();
         #endif
 
-
         #ifdef USE_LOGGING
             WriteDateToLog();
-            for(byte i=0;i<NUMSENSORS;i++)
+            for(byte i = 0; i < NUMSENSORS; i++)
             {
                 //sensors[i]->Status(&logFile);
                 logFile << sensors[i]->Today << ";" << sensors[i]->Actual << ";" << endl;
@@ -168,22 +166,26 @@ void loop()
             logFile << endl;
             logFile.flush(); 
         #endif
-        busy(33);
+        busy(32);
         // update every 5 minutes or whatever is set in userdefs
-        if((lastMinute%UPDATEINTERVAL)==0)
+        if((lastMinute%UPDATEINTERVAL) == 0)
         {
             SendToPvOutput(sensors);
             busy(34);
             // reset the maximum for pvoutput
-            for(byte i=0;i<NUMSENSORS;i++)
+            for(byte i = 0; i < NUMSENSORS; i++)
             {
                 sensors[i]->ResetPeak();
             }
         }
+        busy(33);
+        #ifdef EXOSITE_KEY
+          SendToExosite();
+        #endif
     }
     busy(4);
     // let all sensors do other stuff
-    for(byte i=0;i<NUMSENSORS;i++)
+    for(byte i = 0; i < NUMSENSORS; i++)
     {
       sensors[i]->Loop(lastMinute);
     }

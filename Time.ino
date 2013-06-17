@@ -17,7 +17,7 @@ bool UpdateTime()
 char dt[20];
 char* DateTime(time_t t)
 {
-    int y = year(t)-2000;
+    int y = year(t) - 2000;
     if(y < 0) sprintf(dt,"Never");
     else      sprintf(dt, "%02d.%02d.%02d %02d:%02d:%02d", day(t),month(t),y,hour(t),minute(t),second(t));
     return dt;
@@ -49,15 +49,15 @@ unsigned long getNtpTime()
             if (m == 3) 
             {
                 //  starts last sunday of march
-                dst = (day(now) >= ((31 - (5 * year(now) /4 + 5) % 7)));
+                dst = (day(now) >= ((31 - (5 * year(now) / 4 + 5) % 7)));
             } 
             else if (m== 10) 
             {
                 //last sunday of october
-                dst = (day(now) < ((31 - (5 * year(now) /4 + 2) % 7)));
+                dst = (day(now) < ((31 - (5 * year(now) / 4 + 2) % 7)));
             }
         }
-        now +=(dst?7200:3600); // CEST or CET
+        now +=(dst ? 7200 : 3600); // CEST or CET
         Udp.flush();
         return now;
     }

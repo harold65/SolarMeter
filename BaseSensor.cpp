@@ -41,19 +41,19 @@ void BaseSensor::Update(long Value)
 
 void BaseSensor::Reset()
 {
-    todayCnt=0;
-    Today=0;
+    todayCnt = 0;
+    Today = 0;
 }
 
 void BaseSensor::ResetPeak()
 {
-    Peak=0;
+    Peak = 0;
 }
 
 void BaseSensor::CalculateActuals()
 {
     // Was the last BaseSensor pulse more than 5 minutes ago?
-    if(millis()-lastMillis > 300000)
+    if(millis() - lastMillis > 300000)
     {
         Actual = 0;  // then we have no output
     }

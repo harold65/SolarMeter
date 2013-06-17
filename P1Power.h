@@ -16,13 +16,13 @@ class P1Power : public BaseSensor
     P1Power(HardwareSerial* serIn, int sid, byte t, int f); 
     void Begin(byte i);
     void CalculateActuals();            // Convert P1 data to actual and day values
-    void Status(Print& client); // Dump status to ethernet    
+    void Status(Print& client);         // Dump status to ethernet    
     void Reset();                       // Reset day-counters
     void Loop(int m);                   // scan the P1 port in the main loop
     	
     // Smartmeter data:
-    long  PowerUsage;	// Huidig afgegenomen vermogen, uit P1 meter (wordt in variabele Today gezet)
-    long  PowerSolar;	// Huidig teruggeleverd vermogen, uit P1 meter (wordt negatief in variabele Today gezet als PowerUsage 0 is.)
+    long  PowerUsage;	        // Huidig afgegenomen vermogen, uit P1 meter (wordt in variabele Today gezet)
+    long  PowerSolar;	        // Huidig teruggeleverd vermogen, uit P1 meter (wordt negatief in variabele Today gezet als PowerUsage 0 is.)
     long  GasUsage;		// Gasverbruik, uit P1 meter
     long  m1; 			// Verbruik laagtarief in Wh, uit P1 meter
     long  m2; 			// Verbruik hoogtarief in Wh, uit P1 meter

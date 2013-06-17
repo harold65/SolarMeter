@@ -14,8 +14,8 @@ void P1GasSensor::CalculateActuals()
 
 void P1GasSensor::Reset()
 {
-  todayCnt         = P1->GasUsage; // startwaarde teller om 0.00 uur
-  Today            = 0;
+  todayCnt = P1->GasUsage; // startwaarde teller om 0.00 uur
+  Today = 0;
   Save();
 } 
 
