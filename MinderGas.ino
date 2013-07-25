@@ -61,6 +61,7 @@ void SendToMinderGas()
                 // send the data
                 mgClient << dataString << endl;
                 mgUploadTime = now();
+                mgClient.find(" ");
                 mgResponse = mgClient.parseInt();
                 // close connection
                 mgClient.stop();

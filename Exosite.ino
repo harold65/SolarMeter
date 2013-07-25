@@ -31,7 +31,7 @@ void SendToExosite()
         // send the data itself
         exoSiteClient << str << endl;
         // skip the first part of the response ('HTTP/1.1 ')
-        exositeClient.find(' ');
+        exoSiteClient.find(" ");
         // the characters after the space form the response number, read it
         exResponse = exoSiteClient.parseInt();
         // close the connection

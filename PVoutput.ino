@@ -1,6 +1,7 @@
 IPAddress ip_pvoutput;
 int DnsStatus;
 int pvResponse;
+time_t pvResponseTime;
 
 // This function will contact the DNS server and ask for an IP address of PvOutput
 // If successfull, this address will be used
@@ -100,7 +101,12 @@ void SendToPvOutput(BaseSensor** S)
           }
           pvout << endl << F("Host: pvoutput.org") << endl << endl;
           // read the response code. 200 means ok
-          pvResponse = pvout.parseInt();
+          int lastResponse = pvout.parseInt();
+          if(lastResponse != 200)
+          { 
+            pvResponse = lastResponse;
+            pvResponseTime = now();
+          }
           pvout.stop();
           // give pvoutput some time to process the request
           delay(200);
@@ -117,7 +123,7 @@ void SendToPvOutput(BaseSensor** S)
         b[n] = false;
       }
       production = 0;
-      if(i<NUMSENSORS) sid=S[i+1]->SID;
+      if(i < NUMSENSORS) sid = S[i+1]->SID;
     }
   }
 }

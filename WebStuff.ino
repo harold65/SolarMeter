@@ -10,6 +10,11 @@ void ServeWebClients()
         client << F("Content-Type: text/html") << endl << endl;
         int i=inString.indexOf("save");
         if(i!=-1) SaveValues();
+        i=inString.indexOf("gas");
+        if(i!=-1) 
+        {
+          GasCountdown = 1;
+        }
         i=inString.indexOf("reset");
         if(i!=-1) ResetValues();
         i=inString.indexOf("?");
@@ -96,7 +101,7 @@ void ShowStatus(EthernetClient client)
         sensors[i]->Status(client);
         client << F("</tr>");
     }
-    client << F("</table>PvOutput response=") << pvResponse << br;
+    client << F("</table>last PvOutput fail=") << pvResponse << " @ " << DateTime(pvResponseTime) << br;
     client << F("DNS status=") << DnsStatus << br;
     client << F("Last NTP update=") << DateTime(lastTimeUpdate) << br;
     #ifdef MG_USES_ANALOG_SENSOR
@@ -104,6 +109,7 @@ void ShowStatus(EthernetClient client)
     #endif
     #ifdef USE_MINDERGAS
     client << F("mgUpload=") << DateTime(mgUploadTime) << br;
+    client << F("MgResponse=") << mgResponse << br;
     #endif
     #ifdef EXOSITE_KEY
     client << F("ExResponse=") << exResponse << br;
