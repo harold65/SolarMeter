@@ -54,14 +54,14 @@ void SendToPvOutput(BaseSensor** S)
       //ferraris or P1
       case 24:  // total consumption is production + net consumption
                 v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
-                v[3] = v[1] + production / S[i]->Factor;
+                v[3] = production + (float)(S[i]->Actual) / S[i]->Factor;
                 // prevent negative consumption
                 if(v[3]<0) v[3]=1;
                 b[2] = true;
                 b[3] = true;
                 break;
       // production sensor. log the actual value. This is used by sensor type 24.
-      case 0:   production += (float)(S[i]->Actual) / S[i]->Factor;
+      case 2:   production += (float)(S[i]->Actual) / S[i]->Factor;
       // other sensors (including type 0). Log Peak and total
       default:  v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
                 v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
