@@ -39,7 +39,7 @@ void setup()
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
     // set connect timeout to 2.5 seconds
     W5100.setRetransmissionTime(5000); // 500ms per try
-    W5100.setRetransmissionCount(5);
+    W5100.setRetransmissionCount(8);
     // initialize time server
     Udp.begin(8888);
     // Try to set the time 10 times

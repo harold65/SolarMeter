@@ -114,6 +114,7 @@ void SendToPvOutput(BaseSensor** S)
         else // cannnot connect
         {
           pvResponse=res;
+          pvResponseTime = now();
         }
       }
       // reset the counters for the next round
