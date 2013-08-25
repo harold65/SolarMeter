@@ -1,10 +1,10 @@
 v[0]=S1.Actual;
 v[1]=S1.Today;
-v[2]=F1.Actual;
-v[3]=F1.Today;
-v[4]=G1.Actual;
-v[5]=G1.Today;
-v[6]=T1.Actual;
+v[2]=0;
+v[3]=0;
+v[4]=0;
+v[5]=0;
+v[6]=0;
 v[7]=0;
 v[8]=freeRam();
 v[9]=0;

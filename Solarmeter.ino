@@ -37,11 +37,10 @@ void setup()
 {
     // initialize network
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
-    // set connect timeout to 2.5 seconds
-    W5100.setRetransmissionTime(5000); // 500ms per try
+    // set connect timeout parameters
+    W5100.setRetransmissionTime(2000); // 200ms per try
     W5100.setRetransmissionCount(8);
-    // initialize time server
-    Udp.begin(8888);
+
     // Try to set the time 10 times
     for(byte i = 0; i < 10; i++)
     {
@@ -117,7 +116,7 @@ void loop()
         eeprom_write_byte((uint8_t*) EE_RESETDAY, lastDayReset);
     }
 
-    if(hour(nu) != lastHour)
+    if(hour(nu) > lastHour || hour(nu) == 0)
     {
         busy(2);
         lastHour = hour(nu);
@@ -141,7 +140,7 @@ void loop()
     }
 
     // update every minute
-    if(minute(nu) != lastMinute)
+    if(minute(nu) > lastMinute || minute(nu) == 0)
     {
         busy(3);
         lastMinute = minute(nu);

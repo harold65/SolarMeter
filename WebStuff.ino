@@ -7,8 +7,7 @@ void ServeWebClients()
     {
         inString = client.readStringUntil('\n');
         client << F("HTTP/1.1 200 OK") << endl;
-        client << F("Content-Type: text/html") << endl;
-        client << F("Connection: close") << endl << endl;
+        client << F("Content-Type: text/html") << endl << endl;
         int i=inString.indexOf("save");
         if(i!=-1) SaveValues();
         i=inString.indexOf("gas");

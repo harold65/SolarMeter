@@ -4,7 +4,10 @@ time_t  lastTimeUpdate = 0;
 
 bool UpdateTime()
 {
+    // initialize time server
+    Udp.begin(8888);
     unsigned long newTime = getNtpTime();
+    Udp.stop();
     if (newTime>0) // got a valid time, keep it.
     {
         setTime(newTime);

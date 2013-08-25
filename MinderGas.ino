@@ -46,7 +46,8 @@ void SendToMinderGas()
             EthernetClient mgClient;
             time_t t = now() - SECS_PER_DAY; // we want to upload the gas usage of yesterday so rewind the clock for 1 day
             // try to connect to minderGas
-            if (mgClient.connect("mindergas.nl",80)) 
+            int res = mgClient.connect("mindergas.nl",80); 
+            if (res == 1) 
             {
                 // create a string with the date and the meter value
                 char dataString[80];
@@ -69,7 +70,7 @@ void SendToMinderGas()
             else
             {
                 // no response :-(
-                mgResponse = 0;
+                mgResponse = res;
             }
         }
     }

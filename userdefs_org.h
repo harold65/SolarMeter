@@ -46,7 +46,7 @@ static byte subnet[]    = { 255, 255, 255, 0 };
 // Sensor configuration
 //*****************************************************************
 // NUMSENSORS must match the number of sensors defined.
-#define NUMSENSORS 4
+#define NUMSENSORS 3
 //*****************************************************************
 // S0 sensors have 5 parameters: 
 //   1: The digital pin to which they are connected.
@@ -80,14 +80,6 @@ S0Sensor  S1(2,1000,2222,2,1);   // S0 sensor connected to pin 2, logging to var
 //  Temperature T1("6275",2222,10);
 // if you want to log the gas usage per 'graaddag' in stead of the temperature, enable the next line
 //#define GRAADDAGEN
-//*****************************************************************
-// OneWire temperature sensor. Connected to a digital input
-// Parameters:
-//   1: The digital pin to which the sensor is connected.
-//   2: The SID
-//   3: The factor to convert to degrees
-//   Temperature is logged to v5
-DS_Temperature T2(6,10500,1);
 //*****************************************************************
 // Ferrarissensors have 5 parameters: 
 //   1: The analog input of the left sensor
