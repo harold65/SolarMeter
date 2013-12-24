@@ -6,6 +6,7 @@
 // also remove the // from the solarmeter.ino line "//#include <SD.h>"
 //#define USE_LOGGING
 
+//*****************************************************************
 // Mail variables. Uncomment the next line and a mail will be sent once a day
 //#define USE_MAIL
 #define MAIL_TIME 21 // The default time to mail is 21:00 h
@@ -41,6 +42,17 @@ static byte subnet[]    = { 255, 255, 255, 0 };
 // PvOutput->Settings->System->Live settings->Status interval
 // Default is 5 minutes
 #define UPDATEINTERVAL 5
+
+//*****************************************************************
+// The actual time can be shifted to move the time of uploading to pvoutput and exosite
+// This is to prevent missing uploads because everyone is uploading at exactly the same time
+// Offset is in seconds, positive numbers will upload earlier
+// A negative number will delay the upload by the amount of seconds set here
+#define TIME_OFFSET 0
+
+//*****************************************************************
+// Enable the watchdog only if you know the bootloader can handle this.
+#define USE_WD
 
 //*****************************************************************
 // Sensor configuration
@@ -105,6 +117,6 @@ P1Power P1(&Serial,2222, 24, 1);
 P1GasSensor P1Gas(&P1, 2222, 6, 1);
 //*****************************************************************
 // the next list must be in the correct order and have the same length as NUMSENSORS
-BaseSensor* sensors[] = {&S1,&P1,&P1Gas,&T1};
+BaseSensor* sensors[] = {&S1,&P1,&P1Gas};
 
 #endif

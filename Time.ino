@@ -61,6 +61,7 @@ unsigned long getNtpTime()
             }
         }
         now +=(dst ? 7200 : 3600); // CEST or CET
+        now += TIME_OFFSET;
         Udp.flush();
         return now;
     }

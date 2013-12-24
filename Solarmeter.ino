@@ -24,7 +24,10 @@
 byte   lastDayReset;
 byte   lastHour;
 byte   lastMinute;
-int    upTime;              // the amount of hours the Arduino is running 
+byte   iDay;
+byte   iHour;
+byte   iMinute;
+int    upTime;              // the amount of hours the Arduino is running
 EthernetServer server(80);  // the web server is used to serve status calls
 EthernetUDP Udp;
 char   webData[70];
@@ -62,7 +65,7 @@ void setup()
     #ifdef USE_MINDERGAS
     GetGasValue();
     #endif
-    
+
     // restore the last day on which the counters were reset
     lastDayReset = eeprom_read_byte((uint8_t*) EE_RESETDAY);
     // if the eeprom contains illegal data, set it to a useful value
@@ -70,7 +73,7 @@ void setup()
     lastMinute = minute();
     lastHour = hour();
     upTime = 0;
-    
+
     #ifdef USE_WD
       SetupWatchdog();
     #endif
@@ -92,16 +95,19 @@ void Every5ms()
 }
 
 void loop()
-{   
-    time_t nu = now();
+{
+    // get the actual time
+    iDay = day();
+    iHour = hour();
+    iMinute = minute();
     // reset counters when todays day is different from the last day the counters were reset
-    if(day(nu) != lastDayReset)
+    if(iDay != lastDayReset)
     {
         busy(1);
         #ifdef USE_MINDERGAS
             // Calculate the new gas metervalue
             UpdateGas();
-        #endif   
+        #endif
         for(byte i = 0; i < NUMSENSORS; i++)
         {
             sensors[i]->Reset();
@@ -111,15 +117,17 @@ void loop()
             CloseLogFile();
             OpenLogFile();
         #endif
-        lastDayReset = day(nu);
+        lastDayReset = iDay;
         // store today as the date of the last counter reset
         eeprom_write_byte((uint8_t*) EE_RESETDAY, lastDayReset);
     }
 
-    if(hour(nu) > lastHour || hour(nu) == 0)
+    // hour has increased
+    // cannot simply check the change of an hour because 'updatetime' can also change the hour
+    if(iHour > lastHour || iHour == 0)
     {
         busy(2);
-        lastHour = hour(nu);
+        lastHour = iHour;
         upTime++;
         // save the daily values every hour
         for(byte i = 0; i < NUMSENSORS; i++)
@@ -130,7 +138,7 @@ void loop()
         if(lastHour == 10 || lastHour == 22)
         {
             UpdateTime();
-        } 
+        }
         #ifdef USE_MAIL
             if(lastHour == MAIL_TIME)
             {
@@ -140,10 +148,10 @@ void loop()
     }
 
     // update every minute
-    if(minute(nu) > lastMinute || minute(nu) == 0)
+    if(iMinute > lastMinute || iMinute == 0)
     {
         busy(3);
-        lastMinute = minute(nu);
+        lastMinute = iMinute;
         for(byte i = 0; i < NUMSENSORS; i++)
         {
             sensors[i]->CalculateActuals();
@@ -163,21 +171,21 @@ void loop()
                 logFile << sensors[i]->Today << ";" << sensors[i]->Actual << ";" << endl;
             }
             logFile << endl;
-            logFile.flush(); 
+            logFile.flush();
         #endif
         busy(32);
         // update every 5 minutes or whatever is set in userdefs
         if((lastMinute%UPDATEINTERVAL) == 0)
         {
             SendToPvOutput(sensors);
-            busy(34);
+            busy(33);
             // reset the maximum for pvoutput
             for(byte i = 0; i < NUMSENSORS; i++)
             {
                 sensors[i]->ResetPeak();
             }
         }
-        busy(33);
+        busy(34);
         #ifdef EXOSITE_KEY
           SendToExosite();
         #endif
