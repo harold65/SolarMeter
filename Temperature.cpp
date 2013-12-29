@@ -14,6 +14,7 @@ void Temperature::Begin(byte i)
 {
     BaseSensor::Begin(i); // to initialize other variables
     todayCnt = 0;
+    needUpdate=true;
 }
 
 void Temperature::CalculateActuals()

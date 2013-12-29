@@ -27,8 +27,8 @@ byte   lastMinute;
 byte   iDay;
 byte   iHour;
 byte   iMinute;
-int    upTime;              // the amount of hours the Arduino is running
-EthernetServer server(80);  // the web server is used to serve status calls
+int    upTime;               // the amount of hours the Arduino is running
+EthernetServer server(555);  // port changed from 80 to 555
 EthernetUDP Udp;
 char   webData[70];
 #ifdef USE_LOGGING
