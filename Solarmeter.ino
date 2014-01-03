@@ -1,4 +1,4 @@
-#define VERSION "V11.3"
+#define VERSION "V11.31"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -122,9 +122,10 @@ void loop()
         eeprom_write_byte((uint8_t*) EE_RESETDAY, lastDayReset);
     }
 
-    // hour has increased
+    // hour has changed
     // cannot simply check the change of an hour because 'updatetime' can also change the hour
-    if(iHour > lastHour || iHour == 0)
+    // therefore we also check that the minutes are 0
+    if(iHour != lastHour && iMinute == 0)
     {
         busy(2);
         lastHour = iHour;
@@ -148,7 +149,7 @@ void loop()
     }
 
     // update every minute
-    if(iMinute > lastMinute || iMinute == 0)
+    if(iMinute != lastMinute)
     {
         busy(3);
         lastMinute = iMinute;
