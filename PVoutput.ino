@@ -2,6 +2,8 @@ IPAddress ip_pvoutput;
 int DnsStatus;
 int pvResponse;
 time_t pvResponseTime;
+float previous = -1;
+
 
 // This function will contact the DNS server and ask for an IP address of PvOutput
 // If successfull, this address will be used
@@ -36,7 +38,6 @@ void SendToPvOutput(BaseSensor** S)
   
   CheckIpPv(); // update the ipaddress via DNS
   
-  float production = 0;
   int sid = S[0]->SID;
 
   for(byte i = 0; i<NUMSENSORS; i++) // scan through the sensor array
@@ -55,14 +56,16 @@ void SendToPvOutput(BaseSensor** S)
       //ferraris or P1
       case 24:  // total consumption is production + net consumption
                 v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
-                v[3] = production + (float)(S[i]->Actual) / S[i]->Factor;
-                // prevent negative consumption
-                if(v[3]<0) v[3]=1;
+                // actual power is energy since previous upload divided by number of uploads per hour
+                // using this method because actual values of production and consumption sensors have different sampling rates, causing actual to be unreliable.
+                if(previous >=0 && previous < v[2]) 
+                {
+                  v[3] = (v[2] - previous) * 60 / UPDATEINTERVAL;
+                }
+                previous = v[2];
                 b[2] = true;
                 b[3] = true;
                 break;
-      // production sensor. log the actual value. This is used by sensor type 24.
-      case 2:   production += (float)(S[i]->Actual) / S[i]->Factor;
       // other sensors (including type 0). Log Peak and total
       default:  v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
                 v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
@@ -123,7 +126,6 @@ void SendToPvOutput(BaseSensor** S)
         v[n] = 0;
         b[n] = false;
       }
-      production = 0;
       if(i < NUMSENSORS) sid = S[i+1]->SID;
     }
   }

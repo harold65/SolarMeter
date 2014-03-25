@@ -26,11 +26,12 @@ static byte subnet[]    = { 255, 255, 255, 0 };
 
 //*****************************************************************
 //#define EXOSITE_KEY "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+//#define EXOSITEUPDATEINTERVAL 1
 
 //*****************************************************************
 //#define USE_MINDERGAS
-//#define MG_USES_ANALOG_SENSOR G1
-#define MG_USES_P1_SENSOR P1Gas
+//#define MG_SENSOR G1
+#define MG_SENSOR P1Gas
 #define MG_KEY "xxxxxxxxxxxxxxxxxxxx"
 
 //*****************************************************************

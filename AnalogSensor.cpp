@@ -34,7 +34,6 @@ void AnalogSensor::CheckSensor()
         {
             sensorIsOn = false;
         }
-
         readCounter = 0;
         sensorValue = 0;
     }

@@ -35,12 +35,8 @@ void ReadValue(String input,int i)
     long val = 0;
     bool neg = false;
     int j = i + 3;
-    int address = input[i+1] - '0';
-    #ifdef MG_USES_ANALOG_SENSOR
-    if((address >= 0 && address < NUMSENSORS) || address == 23) 
-    #else
-    if(address >= 0 && address < NUMSENSORS) 
-    #endif
+    int address = input[i+1];
+    if((address >= '0' && address < '9') || address >= 'A' && address < 'J') 
     {
         char c = input[j];
         if(c == '-')
@@ -56,17 +52,14 @@ void ReadValue(String input,int i)
             c = input[j];
         }
         if(neg) val = -val;
-        #ifdef MG_USES_ANALOG_SENSOR
-        if(address == 23) // address = 'G' (gas)
+        if(address >= 'A') // address = 'A...'J' to write the total counters
         {
-            TotalGas = val - MG_USES_ANALOG_SENSOR.Today; // calculate the value of last midnight
-            eeprom_write_dword((uint32_t*) 0, TotalGas);  // store gas total in 0 
+            sensors[address-'A']->NewTotal(val);
         }
-        else
-        #endif
+        else // address = '0'...'9' to write the day counters
         {
             // let the sensor write the value to eeprom
-            sensors[address]->Update(val);
+            sensors[address-'0']->Update(val);
         }
     }
 } 
@@ -95,7 +88,7 @@ void ShowStatus(EthernetClient client)
     client << DateTime(now()) << br;
     client << F("Uptime=") << upTime/24 << "d+" << upTime%24 << "h" << br;  
     client << F("<table border=\"1\" cellspacing=\"0\">");
-    client << F("<tr><th>ID<th>SID<th>Type<th>Actual<th>Peak<th>Today<th>Factor<th>TodayCnt<th>EEprom<th>ppu<th>Pulse<th>Extra</tr>");
+    client << F("<tr><th>ID<th>SID<th>Type<th>Actual<th>Peak<th>Today<th>Total<th>Factor<th>TodayCnt<th>EEprom<th>ppu<th>Pulse<th>Extra</tr>");
 
     for(int i=0;i<NUMSENSORS;i++)
     {  
@@ -107,9 +100,6 @@ void ShowStatus(EthernetClient client)
     client << F("</table>last PvOutput fail=") << pvResponse << " @ " << DateTime(pvResponseTime) << br;
     client << F("DNS status=") << DnsStatus << br;
     client << F("Last NTP update=") << DateTime(lastTimeUpdate) << br;
-    #ifdef MG_USES_ANALOG_SENSOR
-    client << F("Mindergas=") << TotalGas << br;
-    #endif
     #ifdef USE_MINDERGAS
     client << F("mgUpload=") << DateTime(mgUploadTime) << br;
     client << F("MgResponse=") << mgResponse << br;

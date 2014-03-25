@@ -1,4 +1,4 @@
-#define VERSION "V11.31"
+#define VERSION "V11.32"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -38,6 +38,8 @@ char   webData[70];
 
 void setup()
 {
+    // wait for the ethernet shield to wakeup
+    delay(250);
     // initialize network
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
     // set connect timeout parameters
@@ -62,9 +64,8 @@ void setup()
     {
         sensors[i]->Begin(i);
     }
-    #ifdef USE_MINDERGAS
-    GetGasValue();
-    #endif
+    // set a random seed
+    randomSeed(analogRead(0));
 
     // restore the last day on which the counters were reset
     lastDayReset = eeprom_read_byte((uint8_t*) EE_RESETDAY);
@@ -105,7 +106,7 @@ void loop()
     {
         busy(1);
         #ifdef USE_MINDERGAS
-            // Calculate the new gas metervalue
+            // Calculate the new gas metervalue and start the countdown
             UpdateGas();
         #endif
         for(byte i = 0; i < NUMSENSORS; i++)
@@ -188,7 +189,10 @@ void loop()
         }
         busy(34);
         #ifdef EXOSITE_KEY
-          SendToExosite();
+          if((lastMinute%EXOSITEUPDATEINTERVAL) == 0)
+          {
+            SendToExosite();
+          }
         #endif
     }
     busy(4);

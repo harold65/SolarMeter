@@ -14,8 +14,9 @@ void P1Power::Begin(byte i)
 
 void P1Power::Reset()
 {
-  todayCnt         = (m1+m2) - (m3+m4); // startwaarde tellers om 0.00 uur
-  Today            = 0;
+  Midnight = (m1+m2) - (m3+m4); 
+  todayCnt = Midnight;
+  Today    = 0;
   Save();
 } 
 

@@ -18,7 +18,9 @@ class BaseSensor
   virtual void Reset();                        // Reset day-counter
   virtual void Save();                         // Save day-counter
   virtual void Update(long Value);             // Update and save the day counter
+  virtual void NewTotal(long value);           // Update and save the total counter
   virtual void ResetPeak();                    // reset peak so new peak measurement can start
+  long Midnight;                               // The total counter value at the last midnight
   long Today;                                  // Total for today in correct units. Reset at midnight
   long Actual;                                 // Actual measured value in correct units
   long Peak;                                   // Peak value of the last period
@@ -32,6 +34,7 @@ class BaseSensor
   long lastMillis;                             // the time of the last pulse (ms)
   long pulseLength;                            // the time between the last two pulses (ms)
   byte ee;                                     // the address to store the day counter in case of a reset
+  byte ee2;                                    // the address to store the total counter in case of a reset
 };
 
 #endif

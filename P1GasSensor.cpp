@@ -8,14 +8,13 @@ P1GasSensor::P1GasSensor(P1Power* P1port, int sid, byte t, int f) : BaseSensor(1
 
 void P1GasSensor::CalculateActuals()
 {
-  Today = P1->GasUsage - todayCnt;
-  Actual = P1->GasUsage;
+  Today = Midnight - todayCnt;
 }
 
 void P1GasSensor::Reset()
 {
-  todayCnt = P1->GasUsage; // startwaarde teller om 0.00 uur
-  Today = 0;
-  Save();
+  Today=0;
+  Midnight = P1->GasUsage; // Get counter value
+  BaseSensor::Reset(); // store it
 } 
 
