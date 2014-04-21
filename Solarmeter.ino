@@ -1,4 +1,4 @@
-#define VERSION "V11.32"
+#define VERSION "V11.4"
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -39,7 +39,7 @@ char   webData[70];
 void setup()
 {
     // wait for the ethernet shield to wakeup
-    delay(250);
+    delay(300);
     // initialize network
     Ethernet.begin(mac, ip, dnsserver, gateway, subnet);
     // set connect timeout parameters
