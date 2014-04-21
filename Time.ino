@@ -87,7 +87,7 @@ void sendNTPpacket()
 
     // all NTP fields have been given values, now
     // you can send a packet requesting a timestamp: 		   
-    Udp.beginPacket("pool.ntp.org", 123); //NTP requests are to port 123
+    Udp.beginPacket(NTP_SERVER, 123); //NTP requests are to port 123
     Udp.write(packetBuffer,NTP_PACKET_SIZE);
     Udp.endPacket(); 
 }

@@ -23,6 +23,8 @@ static byte dnsserver[] = {192,168,1,1};                          // use the add
                                                                   // or use { 8, 8, 8, 8 } as general DNS server from Google if you have no other option
 static byte gateway[]   = { 192, 168, 1, 1 };
 static byte subnet[]    = { 255, 255, 255, 0 };  
+//*****************************************************************
+#define NTP_SERVER "nl.pool.ntp.org"                             // If you are having problems with the time synchonisation, try a different NTP server
 
 //*****************************************************************
 //#define EXOSITE_KEY "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
