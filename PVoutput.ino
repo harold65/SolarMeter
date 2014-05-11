@@ -1,6 +1,6 @@
 IPAddress ip_pvoutput;
 int DnsStatus;
-int pvResponse;
+char pvResponse[80];
 time_t pvResponseTime;
 float previous = -1;
 
@@ -104,10 +104,10 @@ void SendToPvOutput(BaseSensor** S)
           }
           pvout << endl << F("Host: pvoutput.org") << endl << endl;
           // read the response code. 200 means ok
-          int lastResponse = pvout.parseInt();
+          byte lastResponse = pvout.parseInt();
           if(lastResponse != 200)
           { 
-            pvResponse = lastResponse;
+            pvout.readBytesUntil('\n', pvResponse, 80); 
             pvResponseTime = now();
           }
           pvout.stop();
@@ -116,7 +116,7 @@ void SendToPvOutput(BaseSensor** S)
         }
         else // cannnot connect
         {
-          pvResponse=res;
+          sprintf(pvResponse,"No connection %d", res);
           pvResponseTime = now();
         }
       }

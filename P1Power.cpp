@@ -14,17 +14,17 @@ void P1Power::Begin(byte i)
 
 void P1Power::Reset()
 {
-  Midnight = (m1+m2) - (m3+m4); 
-  todayCnt = Midnight;
   Today    = 0;
-  Save();
+  Midnight = (m1+m2) - (m3+m4); 
+  BaseSensor::Reset();
 } 
 
 void P1Power::CalculateActuals()
 {
   Actual = PowerUsage - PowerSolar;
   if(Peak < abs(Actual)) Peak = Actual; 
-  Today = ((m1+m2)-(m3+m4)) - todayCnt;
+  todayCnt = ((m1+m2)-(m3+m4)) - Midnight;
+  Today = todayCnt;
 }
 
 void P1Power::Loop(int m)

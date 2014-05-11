@@ -1,4 +1,4 @@
-#define VERSION "V11.4"
+#define VERSION "V11.41"
 
 #include <SPI.h>
 #include <Ethernet.h>

@@ -8,7 +8,8 @@ P1GasSensor::P1GasSensor(P1Power* P1port, int sid, byte t, int f) : BaseSensor(1
 
 void P1GasSensor::CalculateActuals()
 {
-  Today = Midnight - todayCnt;
+  todayCnt = P1->GasUsage - Midnight;
+  Today = todayCnt;
 }
 
 void P1GasSensor::Reset()
