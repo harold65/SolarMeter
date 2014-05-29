@@ -82,7 +82,7 @@ S0Sensor  S1(2,1000,2222,2,1);   // S0 sensor connected to pin 2, logging to var
 //AnalogSensor G1(A2,100,2222,6,1000);    // gas sensor connected to analog 2, measuring 100 pulses per m3, showing on SID 2222 variable 6 (voltage) sending to pvoutput in m3
 
 // Example:
-// AnalogSensor W1(A1,10000,2222,8,1);  // water meter sensor connected to analog 1, measuring 10000 pulses per m3.
+// AnalogSensor W1(A1,1000,2222,8,1);  // water meter sensor connected to analog 1, measuring 10000 pulses per m3.
 //                                     Daily water usage (liter) is on v7, actual (liter/h) on v8 (donation mode)
 //*****************************************************************
 // Temperature 'sensor' Gets its value from an online weatherstation at buienradar.nl

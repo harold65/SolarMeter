@@ -1,6 +1,6 @@
 #include "BaseSensor.h"
 
-BaseSensor::BaseSensor(int p,int sid, int f)
+BaseSensor::BaseSensor(int p,unsigned int sid, int f)
 {
     ppu = p;
     SID = sid;

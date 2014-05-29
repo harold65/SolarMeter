@@ -38,6 +38,7 @@ char   webData[70];
 
 void setup()
 {
+    //Serial.begin(115200);
     // wait for the ethernet shield to wakeup
     delay(300);
     // initialize network

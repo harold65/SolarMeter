@@ -20,6 +20,8 @@ void ServeWebClients()
         #endif
         i=inString.indexOf("reset");
         if(i!=-1) ResetValues();
+        i=inString.indexOf("restart");
+        if(i!=-1) while(1); // stay here until the watchdog barks
         i=inString.indexOf("?");
         if(i!=-1) ReadValue(inString,i);
         ShowStatus(client);

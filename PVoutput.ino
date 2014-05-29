@@ -38,7 +38,7 @@ void SendToPvOutput(BaseSensor** S)
   
   CheckIpPv(); // update the ipaddress via DNS
   
-  int sid = S[0]->SID;
+  unsigned int sid = S[0]->SID;
 
   for(byte i = 0; i<NUMSENSORS; i++) // scan through the sensor array
   {
@@ -107,7 +107,9 @@ void SendToPvOutput(BaseSensor** S)
           byte lastResponse = pvout.parseInt();
           if(lastResponse != 200)
           { 
-            pvout.readBytesUntil('\n', pvResponse, 80); 
+            sprintf(pvResponse, "%03d",lastResponse);
+            size_t numchars = pvout.readBytesUntil('\n', pvResponse+3, 80); 
+            pvResponse[numchars+3] = 0; // terminate the string
             pvResponseTime = now();
           }
           pvout.stop();
@@ -116,7 +118,7 @@ void SendToPvOutput(BaseSensor** S)
         }
         else // cannnot connect
         {
-          sprintf(pvResponse,"No connection %d", res);
+          sprintf(pvResponse,"No response\0");
           pvResponseTime = now();
         }
       }

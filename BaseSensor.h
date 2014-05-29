@@ -9,7 +9,7 @@
 class BaseSensor
 {
   public:
-  BaseSensor(int ppu, int sid, int f);         // constructor
+  BaseSensor(int ppu, unsigned int sid, int f);// constructor
   virtual void Begin(byte index);              // initialize all variables
   virtual void CheckSensor();                  // check the input and update counters (called from 5ms interrupt)
   virtual void Loop(int m);                    // Called from main loop				
@@ -24,7 +24,7 @@ class BaseSensor
   long Today;                                  // Total for today in correct units. Reset at midnight
   long Actual;                                 // Actual measured value in correct units
   long Peak;                                   // Peak value of the last period
-  int  SID;                                    // System id where this sensor logs to
+  unsigned int SID;                            // System id where this sensor logs to
   byte Type;                                   // Variable of PvOutput to log to. See userdefs.h for explanation  
   int Factor;                                  // Values will be divided by this number before sending them to pvOutput
   
