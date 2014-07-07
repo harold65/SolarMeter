@@ -1,20 +1,25 @@
 const int NTP_PACKET_SIZE= 48; // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets 
 time_t  lastTimeUpdate = 0;
+byte ntpRetry;
 
-bool UpdateTime()
+void UpdateTime()
 {
     // initialize time server
-    Udp.begin(8888);
-    unsigned long newTime = getNtpTime();
-    Udp.stop();
-    if (newTime>0) // got a valid time, keep it.
+    // Try to set the time 10 times
+    for(byte i = 1; i <= 10; i++)
     {
-        setTime(newTime);
-        lastTimeUpdate = newTime; 
-        return true;
+        Udp.begin(8888);
+        unsigned long newTime = getNtpTime();
+        Udp.stop();
+        if (newTime>0) // got a valid time, keep it.
+        {
+            setTime(newTime);
+            lastTimeUpdate = newTime;
+            ntpRetry = i;
+            break;
+        }
     }
-    return false;
 }
 
 char dt[20];
@@ -28,7 +33,10 @@ char* DateTime(time_t t)
 
 unsigned long getNtpTime()
 {
-    while(Udp.parsePacket()) Udp.flush(); // make sure udp buffer is empty
+    while(Udp.parsePacket())
+    {
+      Udp.flush(); // make sure udp buffer is empty
+    }
     sendNTPpacket();
     delay(1000);
     if(Udp.parsePacket())
@@ -38,13 +46,14 @@ unsigned long getNtpTime()
         // or two words, long. First, esxtract the two words:
         unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
         unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
+        // check for invalid response
+        if(highWord == 0 || lowWord == 0) return 0;
         // combine the four bytes (two words) into a long integer
         // this is NTP time (seconds since Jan 1 1900):
         unsigned long secsSince1900 = highWord << 16 | lowWord;
         unsigned long now = secsSince1900 - 2208988800UL;  // GMT
         // DST == DaySavingTime == Zomertijd
         boolean dst = false;
-
         int m = month(now);
         dst = !(m < 3 || m > 10); // between october and march
         if (dst) 

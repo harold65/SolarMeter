@@ -38,7 +38,6 @@ char   webData[70];
 
 void setup()
 {
-    //Serial.begin(115200);
     // wait for the ethernet shield to wakeup
     delay(300);
     // initialize network
@@ -48,10 +47,8 @@ void setup()
     W5100.setRetransmissionCount(8);
 
     // Try to set the time 10 times
-    for(byte i = 0; i < 10; i++)
-    {
-        if(UpdateTime()) break;
-    }
+    UpdateTime();
+
     #ifdef USE_LOGGING
         // initialize SD card
         SetupSD();

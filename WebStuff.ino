@@ -9,24 +9,25 @@ void ServeWebClients()
         client << F("HTTP/1.1 200 OK") << endl;
         client << F("Content-Type: text/html") << endl;
         client << F("Connection: close") << endl << endl;
-        int i=inString.indexOf("save");
-        if(i!=-1) SaveValues();
+        if (Command("save")) SaveValues();
         #ifdef USE_MINDERGAS
-          i=inString.indexOf("gas");
-          if(i!=-1) 
-          {
-            GasCountdown = 1;
-          }
+          if (Command("gas")) GasCountdown = 1;
         #endif
-        i=inString.indexOf("reset");
-        if(i!=-1) ResetValues();
-        i=inString.indexOf("restart");
-        if(i!=-1) while(1); // stay here until the watchdog barks
-        i=inString.indexOf("?");
+        if (Command("reset")) ResetValues();
+        if (Command("restart")) while(1); // stay here until the watchdog barks
+        if (Command("ntp")) UpdateTime(); // reload the ntp time
+        int i=inString.indexOf("?");
         if(i!=-1) ReadValue(inString,i);
         ShowStatus(client);
         client.stop();
     }
+}
+
+bool Command(char* command)
+{
+  int i = inString.indexOf(command);
+  if (i==-1) return false;
+  return true;
 }
 
 void ReadValue(String input,int i)
@@ -101,7 +102,7 @@ void ShowStatus(EthernetClient client)
     }
     client << F("</table>last PvOutput fail=") << pvResponse << " @ " << DateTime(pvResponseTime) << br;
     client << F("DNS status=") << DnsStatus << br;
-    client << F("Last NTP update=") << DateTime(lastTimeUpdate) << br;
+    client << F("Last NTP update=") << DateTime(lastTimeUpdate) << " (in " << ntpRetry << "x)" <<  br;
     #ifdef USE_MINDERGAS
     client << F("mgUpload=") << DateTime(mgUploadTime) << br;
     client << F("MgResponse=") << mgResponse << br;

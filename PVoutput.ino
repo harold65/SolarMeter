@@ -103,22 +103,28 @@ void SendToPvOutput(BaseSensor** S)
             }
           }
           pvout << endl << F("Host: pvoutput.org") << endl << endl;
-          // read the response code. 200 means ok
+          // give pvoutput some time to process the request
+          delay(500);
+          // read the response code. 200 means ok. 0 means that there is no response yet
           byte lastResponse = pvout.parseInt();
-          if(lastResponse != 200)
+          if(lastResponse == 0)
+          {
+            sprintf(pvResponse,"Response timeout\0");
+            pvResponseTime = now();
+          }
+          else if(lastResponse != 200)
           { 
             sprintf(pvResponse, "%03d",lastResponse);
-            size_t numchars = pvout.readBytesUntil('\n', pvResponse+3, 80); 
+            size_t numchars = pvout.readBytes(pvResponse+3, 80); 
             pvResponse[numchars+3] = 0; // terminate the string
             pvResponseTime = now();
           }
           pvout.stop();
-          // give pvoutput some time to process the request
-          delay(200);
+
         }
         else // cannnot connect
         {
-          sprintf(pvResponse,"No response\0");
+          sprintf(pvResponse,"No connection\0");
           pvResponseTime = now();
         }
       }
