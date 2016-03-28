@@ -1,15 +1,15 @@
-#define VERSION "V11.41"
+#define VERSION "V11.42"
 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <Dns.h>
 #include <Time.h>
-#include <FlashMini.h>
 #include <MsTimer2.h>
 #include <avr/wdt.h>
 #include <utility/w5100.h>
 
+#include "FlashMini.h"
 #include "S0Sensor.h"
 #include "P1GasSensor.h"
 #include "P1Power.h"
@@ -135,7 +135,7 @@ void loop()
             sensors[i]->Save();
         }
         // sync the time at fixed interval
-        if(lastHour == 10 || lastHour == 22)
+        if(lastHour == 2 || lastHour == 14)
         {
             UpdateTime();
         }

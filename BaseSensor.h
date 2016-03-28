@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include <avr/eeprom.h>
 #include <EthernetClient.h>
-#include <FlashMini.h>
+#include "FlashMini.h"
 
 class BaseSensor
 {

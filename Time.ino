@@ -43,7 +43,7 @@ unsigned long getNtpTime()
     {
         Udp.read(packetBuffer,NTP_PACKET_SIZE);  // read the packet into the buffer
         // the timestamp starts at byte 40 of the received packet and is four bytes,
-        // or two words, long. First, esxtract the two words:
+        // or two words, long. First, extract the two words:
         unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
         unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
         // check for invalid response
@@ -55,18 +55,19 @@ unsigned long getNtpTime()
         // DST == DaySavingTime == Zomertijd
         boolean dst = false;
         int m = month(now);
+        int previousSunday = day(now) - weekday(now) + 1;  // add one since weekday starts at 1
         dst = !(m < 3 || m > 10); // between october and march
         if (dst) 
         {
             if (m == 3) 
             {
                 //  starts last sunday of march
-                dst = (day(now) >= ((31 - (5 * year(now) / 4 + 5) % 7)));
+                dst = previousSunday >= 25;
             } 
-            else if (m== 10) 
+            else if (m == 10) 
             {
-                //last sunday of october
-                dst = (day(now) < ((31 - (5 * year(now) / 4 + 2) % 7)));
+                // ends last sunday of october
+                dst = previousSunday < 25;
             }
         }
         now +=(dst ? 7200 : 3600); // CEST or CET

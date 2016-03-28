@@ -6,7 +6,7 @@ void SendToExosite()
 {
     EthernetClient exoSiteClient;
     // try to connect to exoSite
-    if (exoSiteClient.connect("m2.exosite.com",80)) 
+    if (exoSiteClient.connect((char*)"m2.exosite.com",80)) 
     {
         long v[9];
         // fill the v-array with values defined in the exosite.h file
@@ -31,7 +31,7 @@ void SendToExosite()
         // send the data itself
         exoSiteClient << str << endl;
         // skip the first part of the response ('HTTP/1.1 ')
-        exoSiteClient.find(" ");
+        exoSiteClient.find((char*)" ");
         // the characters after the space form the response number, read it
         exResponse = exoSiteClient.parseInt();
         // close the connection

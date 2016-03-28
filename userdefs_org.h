@@ -92,7 +92,7 @@ S0Sensor  S1(2,1000,2222,2,1);   // S0 sensor connected to pin 2, logging to var
 //   2: The SID
 //   3: The factor to convert to degrees
 //   Temperature is logged to v5
-//  Temperature T1("6275",2222,10);
+//  Temperature T1((char*)"6275",2222,10);
 // if you want to log the gas usage per 'graaddag' in stead of the temperature, enable the next line
 //#define GRAADDAGEN
 //*****************************************************************

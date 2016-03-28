@@ -16,7 +16,7 @@ void CheckIpPv()
   IPAddress remote_addr;
 
   dns.begin(Ethernet.dnsServerIP());
-  DnsStatus = dns.getHostByName("pvoutput.org", remote_addr);
+  DnsStatus = dns.getHostByName((char*)"pvoutput.org", remote_addr);
   if (DnsStatus == 1)  ip_pvoutput = remote_addr; // if success, copy
 }
 
@@ -43,32 +43,44 @@ void SendToPvOutput(BaseSensor** S)
   for(byte i = 0; i<NUMSENSORS; i++) // scan through the sensor array
   {
     byte type = S[i]->Type;
+    float actual = S[i]->Actual / S[i]->Factor;
+    float peak = S[i]->Peak / S[i]->Factor;
+    float today = S[i]->Today / S[i]->Factor;
+
     switch(type)
     {
       // temperature
-      case 5:   v[type-1] += (float)(S[i]->Actual) / S[i]->Factor;
+      case 5:   v[type-1] += actual;
                 b[type-1] = true;
                 break;
       //voltage
-      case 6:   v[type-1] += (float)(S[i]->Today) / S[i]->Factor;
+      case 6:   v[type-1] += today;
                 b[type-1] = true;
                 break;
       //ferraris or P1
       case 24:  // total consumption is production + net consumption
-                v[2] = v[0] + (float)(S[i]->Today) / S[i]->Factor;
-                // actual power is energy since previous upload divided by number of uploads per hour
-                // using this method because actual values of production and consumption sensors have different sampling rates, causing actual to be unreliable.
-                if(previous >=0 && previous < v[2]) 
+                v[2] = v[0] + today;
+                
+                if(v[1] == 0) // no production, use data from type 24 directly
                 {
-                  v[3] = (v[2] - previous) * 60 / UPDATEINTERVAL;
+                    v[3] = actual;
+                }
+                else
+                {
+                    // actual power is energy since previous upload divided by number of uploads per hour
+                    // using this method because actual values of production and consumption sensors have different sampling rates, causing actual to be unreliable.
+                    if(previous >=0 && previous < v[2]) 
+                    {
+                      v[3] = (v[2] - previous) * 60 / UPDATEINTERVAL;
+                    }
                 }
                 previous = v[2];
                 b[2] = true;
                 b[3] = true;
                 break;
       // other sensors (including type 0). Log Peak and total
-      default:  v[type-1] += (float)(S[i]->Peak) / S[i]->Factor;
-                v[type-2] += (float)(S[i]->Today) / S[i]->Factor;
+      default:  v[type-1] += peak;
+                v[type-2] += today;
                 b[type-1] = true;
                 b[type-2] = true;
     }

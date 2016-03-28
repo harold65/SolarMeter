@@ -40,13 +40,13 @@ void Temperature::GetTemperature()
 {
     // Get temperature from buienradar
     EthernetClient buienradarClient;
-    if(buienradarClient.connect("xml.buienradar.nl",80)) 
+    if(buienradarClient.connect((char*)"xml.buienradar.nl",80)) 
     {
         buienradarClient << F("GET / HTTP/1.1") << endl;
         buienradarClient << F("Host: xml.buienradar.nl") << endl << endl;
         if(buienradarClient.find(weatherStation)) //6275 = Arnhem
         {
-            if(buienradarClient.find("<temperatuurGC>"))
+            if(buienradarClient.find((char*)"<temperatuurGC>"))
             {
                 actual = buienradarClient.parseFloat();
                 // Calculate new average

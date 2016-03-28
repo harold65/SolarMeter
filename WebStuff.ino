@@ -1,4 +1,4 @@
-String inString = String("");
+String inString = String((char*)"");
 
 void ServeWebClients()
 {
@@ -9,13 +9,13 @@ void ServeWebClients()
         client << F("HTTP/1.1 200 OK") << endl;
         client << F("Content-Type: text/html") << endl;
         client << F("Connection: close") << endl << endl;
-        if (Command("save")) SaveValues();
+        if (Command((char*)"save")) SaveValues();
         #ifdef USE_MINDERGAS
-          if (Command("gas")) GasCountdown = 1;
+          if (Command((char*)"gas")) GasCountdown = 1;
         #endif
-        if (Command("reset")) ResetValues();
-        if (Command("restart")) while(1); // stay here until the watchdog barks
-        if (Command("ntp")) UpdateTime(); // reload the ntp time
+        if (Command((char*)"reset")) ResetValues();
+        if (Command((char*)"restart")) while(1); // stay here until the watchdog barks
+        if (Command((char*)"ntp")) UpdateTime(); // reload the ntp time
         int i=inString.indexOf("?");
         if(i!=-1) ReadValue(inString,i);
         ShowStatus(client);

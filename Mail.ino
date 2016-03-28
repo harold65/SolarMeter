@@ -41,7 +41,7 @@ void SendMail()
 
 boolean CheckResponse()
 {
-  return mailClient.find("\n");
+  return mailClient.find((char*)"\n");
   
 //    long timer = millis();
  //   while(millis() - timer < 5000)
