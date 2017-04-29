@@ -39,7 +39,7 @@ void ReadValue(String input,int i)
     bool neg = false;
     int j = i + 3;
     int address = input[i+1];
-    if((address >= '0' && address < '9') || address >= 'A' && address < 'J') 
+    if((address >= '0' && address < '9') || (address >= 'A' && address < 'J')) 
     {
         char c = input[j];
         if(c == '-')
