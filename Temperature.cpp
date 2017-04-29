@@ -40,6 +40,7 @@ void Temperature::GetTemperature()
 {
     // Get temperature from buienradar
     EthernetClient buienradarClient;
+    buienradarClient.setTimeout(2000);
     if(buienradarClient.connect((char*)"xml.buienradar.nl",80)) 
     {
         buienradarClient << F("GET / HTTP/1.1") << endl;
