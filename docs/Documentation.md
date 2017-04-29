@@ -1,5 +1,5 @@
 # Arduino Solar Meter
-!Version 11.42
+# Version 11.42
 Updated software manual.
 [Arduino Solar Meter Software Manual V11_42.pdf](Documentation_Arduino Solar Meter Software Manual V11_42.pdf)
 # Version 11.41
