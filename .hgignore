@@ -1,3 +1,0 @@
-syntax: glob
-libraries/*/?xamples/**.*
-*.bak
