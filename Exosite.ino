@@ -8,7 +8,7 @@ void SendToExosite()
     // try to connect to exoSite
     if (exoSiteClient.connect((char*)"m2.exosite.com",80)) 
     {
-        long v[9];
+        long v[10];
         // fill the v-array with values defined in the exosite.h file
         #include "exosite.h"
         
