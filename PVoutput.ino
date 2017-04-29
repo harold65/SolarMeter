@@ -114,9 +114,12 @@ void SendToPvOutput(BaseSensor** S)
               pvout << "&v" << i+1 << "=" << v[i];
             }
           }
-          pvout << endl << F("Host: pvoutput.org") << endl << endl;
+          pvout << F(" HTTP/1.1") << endl;
+          pvout << F("Host: pvoutput.org") << endl << endl;
           // give pvoutput some time to process the request
           delay(500);
+		      // skip the first part of the reply, which is "HTTP/1.1 "
+		      pvout.readBytes(webData, 9);
           // read the response code. 200 means ok. 0 means that there is no response yet
           byte lastResponse = pvout.parseInt();
           if(lastResponse == 0)
@@ -132,7 +135,6 @@ void SendToPvOutput(BaseSensor** S)
             pvResponseTime = now();
           }
           pvout.stop();
-
         }
         else // cannnot connect
         {
