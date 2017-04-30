@@ -1,4 +1,9 @@
 # Arduino Solar Meter
+# Version 11.43
+* Added library installation instruction
+* Changed code to remove compiler warnings
+* Fixed bug in upload to exosite
+* Fixed response from PvOutput
 # Version 11.42
 Updated software manual.
 [Arduino Solar Meter Software Manual V11_42.pdf]
