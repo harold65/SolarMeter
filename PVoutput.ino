@@ -43,9 +43,9 @@ void SendToPvOutput(BaseSensor** S)
   for(byte i = 0; i<NUMSENSORS; i++) // scan through the sensor array
   {
     byte type = S[i]->Type;
-    float actual = S[i]->Actual / S[i]->Factor;
-    float peak = S[i]->Peak / S[i]->Factor;
-    float today = S[i]->Today / S[i]->Factor;
+    float actual = (float)S[i]->Actual / S[i]->Factor;
+    float peak = (float)S[i]->Peak / S[i]->Factor;
+    float today = (float)S[i]->Today / S[i]->Factor;
 
     switch(type)
     {
@@ -89,7 +89,13 @@ void SendToPvOutput(BaseSensor** S)
     {
       if(sid > 0) // only upload if the sid is valid
       {
-        int res = pvout.connect(ip_pvoutput,80);
+		int res = 0;
+		int retries = 5;
+		while (retries-- > 0 && res != 1)
+		{
+		  res = pvout.connect(ip_pvoutput,80);
+		  busy(0); // Strobe watchdog
+		}
         if(res == 1) // connection successfull
         {
           pvout << F("GET /service/r2/addstatus.jsp");
